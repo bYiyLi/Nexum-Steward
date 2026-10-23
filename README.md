@@ -4,11 +4,13 @@
 
 Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 服务部署插件。用户先安装 Nexum，在目标 Linux 服务器安装 Nexum Agent，并在 Nexum OAuth Grant 中明确选择可管理的 Agent；插件通过既有 Nexum MCP 调用 Project / Files / Process 工具，无须另建 PaaS、Docker 专用 MCP Server 或 Web 运维后台。
 
-> **当前状态：产品设计与预览阶段。** 插件包已转为 OpenAI 推荐的可移植格式；真实 ChatGPT 安装、OAuth 授权和 Docker Compose 生产操作尚未完成端到端验收。产品 Skill 暂不包含在仓库中，留待后续单独设计。
+> **当前状态：私人插件空模板与安装引导正在准备，尚未在 ChatGPT 完成安装验收。** 空模板不包含 MCP 连接或 Skill。用户按实际需求生成私人插件并在自己的账户安装，连接与授权由现有 Nexum 应用处理。
 
 ## 产品网站
 
 **https://nexum-steward.sites.y2l.top** · [GitHub](https://github.com/bYiyLi/Nexum-Steward)
+
+**[私人 ChatGPT Plugin 安装引导](https://nexum-steward.sites.y2l.top/install/)** · [AI Agent 安装指南](INSTALL.md)
 
 官网位于 [site/](site/)，参考 KG OS 产品网站的静态 Astro + GitHub Actions Pages 发布方式，但拥有独立的设计与内容。
 
@@ -16,15 +18,15 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 
 | 文件 | 作用 |
 | --- | --- |
-| [plugin.json](plugin.json) | ChatGPT 可使用的 Agent Plugins 1.0 可移植清单 |
-| [mcp.json](mcp.json) | 现有 Nexum MCP 远程连接入口，不添加新运维 Tools |
+| [templates/plugin.json](templates/plugin.json) | 最简 ChatGPT 插件空模板，不预设 MCP 或 Skill |
+| [INSTALL.md](INSTALL.md) | AI Agent 使用的私人插件安装指南 |
 | [site/](site/) | 产品官网（GitHub Pages 静态站） |
 | [docs/requirements.md](docs/requirements.md) | 需求与验收边界 |
 | [docs/design.md](docs/design.md) | 插件和网站技术设计 |
 | [docs/development/02-chatgpt-plugin-and-website.md](docs/development/02-chatgpt-plugin-and-website.md) | 本阶段实施和验收 |
 | [docs/chatgpt-project.md](docs/chatgpt-project.md) | 维护者的 ChatGPT 开发 Project Instructions 模板 |
 
-此项目**不包含**原来的 `.codex-plugin/` 兼容包、`skills/`、任何正在运行的运维后端或 Docker 操作脚本。ChatGPT 与 Codex 的插件目录基础协议具有重叠，但本项目的目标用户和验收环境是 **ChatGPT**。
+插件模板与安装指南在仓库中各维护一份，版本通过 Git Tag 区分；官网使用 `site/src/content/` 下的提示词。项目**不包含** `.codex-plugin/`、产品 `skills/`、独立运维后端或 Docker 操作脚本。
 
 ## 预期工作流程
 

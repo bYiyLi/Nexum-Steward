@@ -4,6 +4,8 @@
 
 在已初始化的 Nexum Steward 仓库中，纠正错误的 Codex 专属脚手架，并交付面向 ChatGPT 的 **MCP-only 可移植插件基础**及**公开静态产品官网**。产品 Skill 延后，不能用尚不存在的 Skill 填充本阶段验收。
 
+> **后续目录约定（本地开发，尚未发布）**：用户将该阶段原有根目录 `plugin.json` / `mcp.json` 替换为 `templates/plugin.json` 最简空模板；插件安装指南统一为仓库根目录 `INSTALL.md`；官网提示词位于 `site/src/content/`，生成的静态 `/INSTALL.md` 来自根目录原文。无 `install/` 目录、版本目录、预置 Skill 或自动打包脚本；版本通过 Git Tag 区分。下方 P-01、历史提交及线上记录保留作为**此前已发布版本**的证据，不代表此次结构调整已推送上线。
+
 依据：`docs/requirements.md`（R-08～R-12）、`docs/design.md`、[OpenAI 插件打包文档](https://developers.openai.com/plugins/build/plugins)、[GitHub Pages Actions 文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
 ## 范围和验收

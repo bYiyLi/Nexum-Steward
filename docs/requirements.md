@@ -24,11 +24,12 @@
 
 | ID | 要求 | 验收 |
 | --- | --- | --- |
-| R-08 | 插件采用 ChatGPT 支持的**根目录可移植 Agent Plugins 清单**，复用 Nexum OAuth MCP；删除 Codex 兼容脚手架。 | 检查 `plugin.json` / `mcp.json`、官方 schema 对照与路径。 |
+| R-08 | 官方只维护 `templates/plugin.json` 最简 ChatGPT 插件空模板，不预设 MCP 或 Skill；用户按需基于模板生成私人插件并复用现有 Nexum 应用。 | 模板 JSON 格式与目录检查，不把空模板视作已安装私人插件。 |
 | R-09 | 暂不交付产品 Skill，后续在明确需求后独立设计。 | 不存在 `skills/`、产品 `SKILL.md` 或由它支撑的宣称。 |
 | R-10 | 官网为独立静态产品介绍站；不得冒充可运行后台。 | 页面源码、导航与文案评审。 |
 | R-11 | 官网提供简体中文与英文入口、响应式布局、清晰的产品流程及仓库链接。 | 本地构建 + 页面交互/移动端检查。 |
 | R-12 | GitHub Pages 从公开源码部署至 `nexum-steward.sites.y2l.top` 并启用 HTTPS。 | workflow 成功、Pages 精确域名绑定、泛解析 DNS 与 HTTPS 实际检查。 |
+| R-13 | `INSTALL.md` 位于仓库根目录，网站展示可复制的安装提示词；不使用安装目录或版本目录，版本由 Git Tag 区分。 | 文件位置、静态构建产物、安装提示词与指南链接一致。 |
 
 ## 非目标
 

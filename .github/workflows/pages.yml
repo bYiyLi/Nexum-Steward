@@ -5,7 +5,10 @@ on:
     branches: [main]
     paths:
       - "site/**"
+      - "INSTALL.md"
+      - "templates/plugin.json"
       - ".github/workflows/pages.yml"
+      - "tests/plugin.test.mjs"
       - "tests/site.test.mjs"
   workflow_dispatch:
 

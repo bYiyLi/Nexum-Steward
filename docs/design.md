@@ -20,15 +20,14 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 
 现阶段只定义连接与产品边界，**不定义产品 Skill 及其自动化工作流**。
 
-## 2. ChatGPT 插件包
+## 2. ChatGPT 插件模板与安装入口
 
-依据 OpenAI 当前 [插件打包文档](https://developers.openai.com/plugins/build/plugins) 与 Agent Plugins 1.0：
+依据 OpenAI [插件打包文档](https://developers.openai.com/plugins/build/plugins) 与 Agent Plugins 1.0：
 
-- `plugin.json` 放在项目根目录，使用 `https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`。
-- `mcp.json` 放在根目录，使用 `https://agent-plugins.org/schemas/1.0.0/mcp.schema.json`，声明 `streamable-http` 连接 `https://nexum.y2l.top/mcp`。现行公开 MCP JSON Schema 不接受服务器条目上的 `extensions` 字段，因此此基础包保持最小可校验格式；OAuth 能否在 ChatGPT 安装时正确发现和完成授权仍须平台实测。
-- **没有** `.codex-plugin/plugin.json`、`skills/`、`SKILL.md`、Hooks 或本地可执行文件。
-- 公共包不包含用户 Token；OAuth 在 ChatGPT 与 Nexum 之间完成。Nexum `/mcp` 未认证访问返回 `401` 和 OAuth 发现入口已从实际公开端点核实（2026-10-23）。
-- `mcp.json` 是用户可分发的可移植声明，**不代表已完成 ChatGPT 实际安装、Grant 选择或连接验收**；ChatGPT 注册的具体插件 identity/技术 ID 必须由真实平台操作获取，不能在代码中虚构。
+- `templates/plugin.json` 是唯一官方**空模板**，仅保留格式所需基础字段；不预置 MCP、Skill、Hooks 或业务工作流。生成给用户的私人插件时再根据实际需求和宿主能力完善内容。
+- `INSTALL.md` 位于仓库根目录，作为 AI Agent 的安装指南；`site/src/content/install-prompt.zh.txt` 与 `install-prompt.en.txt` 为官网展示的安装提示词。官网静态构建直接从根目录指南生成 `/INSTALL.md`，无须维护第二份副本。
+- 不建立 `install/`、`templates` 版本子目录、打包脚本或额外的 MCP Server；发行历史使用 **Git Tag** 而不是目录路径体现。
+- 用户的现有 Nexum MCP 应用以及 OAuth Grant 由真实 ChatGPT/Nexum 平台管理。模板本身没有预授予任何 Agent 权限，也不能以提示词替代真实授权。插件实际创建、绑定、安装及工具调用仍须独立核验。
 
 ## 3. Agent 选择与部署边界（后续验证目标）
 
@@ -42,6 +41,7 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 - 网站责任：介绍产品愿景、用户授权流程、安全边界、开发状态、公开源码；**不运行控制面服务，不接受凭证**。
 - 参考 KG OS 源仓库的 `distribution/site/`：其 Astro 静态构建、响应式布局、双语、深浅主题与 GitHub Pages Actions 发布方式。仅借鉴工程模式与结构，不直接复制其带许可的源文件。
 - 本项目网站位于 `site/`，Astro 静态输出 `site/dist/`；简体中文默认 `/`，英文 `/en/`。
+- 安装引导页面为 `/install/` 和 `/en/install/`，只展示与复制站点源文件中的安装提示词；AI 指南统一从仓库根目录 `INSTALL.md` 生成网页可访问的 `/INSTALL.md`。
 - GitHub Actions 工作流从 `main` 构建，`actions/upload-pages-artifact` 仅发布 `site/dist`，`actions/deploy-pages` 部署。静态站不加载服务器机密与私有 Nexum 源码。
 - 自定义域名：`nexum-steward.sites.y2l.top`；沿用已有 DNSPod `*.sites.y2l.top` → `byiyli.github.io` 泛解析。**仍需为本 GitHub Pages 仓库单独绑定精确域名**（Pages `cname`）并验证 HTTPS。通配符 DNS 不会自动把不同项目路由到不同仓库，也不能代替 GitHub Pages 站点绑定；GitHub 官方不建议直接使用通配符指向 Pages，需关注域名接管风险，后续可改为自动化管理精确 DNS 记录。
 - 只对真实已交付的事实说“已完成”；规划中的部署、自动诊断和 Skill 必须以“设计方向 / 开发中”展示。

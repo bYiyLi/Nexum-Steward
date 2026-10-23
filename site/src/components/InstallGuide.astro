@@ -1,0 +1,149 @@
+---
+import { copy, type Locale } from "../lib/content";
+import { getInstallCopy, installationManual, installationTemplate } from "../lib/installation";
+import "../styles/site.css";
+import "../styles/installation.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const locale = Astro.props.locale;
+const shared = copy[locale];
+const { text: t, prompt } = getInstallCopy(locale);
+const home = locale === "zh" ? "/" : "/en/";
+const alternate = locale === "zh" ? "/en/install/" : "/install/";
+const path = home + "install/";
+const url = "https://nexum-steward.sites.y2l.top" + path;
+const repo = "https://github.com/bYiyLi/Nexum-Steward";
+---
+<!doctype html>
+<html lang={shared.lang} data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content={t.description} />
+    <meta property="og:title" content={t.title} />
+    <meta property="og:description" content={t.description} />
+    <meta property="og:url" content={url} />
+    <link rel="canonical" href={url} />
+    <link rel="alternate" hreflang="zh-CN" href="https://nexum-steward.sites.y2l.top/install/" />
+    <link rel="alternate" hreflang="en" href="https://nexum-steward.sites.y2l.top/en/install/" />
+    <link rel="alternate" hreflang="x-default" href="https://nexum-steward.sites.y2l.top/install/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{t.title} — Nexum Steward</title>
+    <script is:inline>
+      try {
+        if (localStorage.getItem("nexum-steward-theme") === "light") {
+          document.documentElement.dataset.theme = "light";
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#guide-main">{shared.skip}</a>
+    <div class="page-glow" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={home} aria-label="Nexum Steward">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" width="38" height="38" fill="none">
+              <path d="M20 3L34.7 11.5V28.5L20 37L5.3 28.5V11.5L20 3Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12.8 26V14L27.2 26V14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" />
+              <circle cx="33" cy="8" r="3.2" fill="#81eac5" />
+            </svg>
+          </span>
+          <span>Nexum <strong>Steward</strong></span>
+        </a>
+        <div class="header-actions">
+          <a class="install-back" href={home}>{t.back}</a>
+          <a class="language-switch" href={alternate} hreflang={locale === "zh" ? "en" : "zh-CN"}>{shared.language}</a>
+          <button class="theme-switch" data-theme-switch aria-label={shared.themeLabel} title={shared.themeLabel} type="button">
+            <svg class="sun-symbol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3.5"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M19.07 4.93l-1.42 1.42M6.35 17.65l-1.42 1.42"/>
+            </svg>
+            <svg class="moon-symbol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 15.3A8.5 8.5 0 018.7 4 8.5 8.5 0 1020 15.3Z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container guide-main" id="guide-main">
+      <div class="guide-heading">
+        <p class="section-kicker">{t.phase}</p>
+        <h1>{t.heading}</h1>
+        <p class="guide-intro">{t.introduction}</p>
+        <p class="guide-notice">{t.note}</p>
+      </div>
+
+      <section class="guide-flow" aria-labelledby="guide-flow-heading">
+        <h2 id="guide-flow-heading">{t.stepsTitle}</h2>
+        <ol class="guide-steps">
+          {t.steps.map(([n, title, body]) => (
+            <li>
+              <span class="guide-number">{n}</span>
+              <h3>{title}</h3>
+              <p>{body}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="guide-prompt" aria-labelledby="guide-prompt-heading">
+        <div class="guide-prompt-head">
+          <div>
+            <p class="section-kicker">COPY / PASTE</p>
+            <h2 id="guide-prompt-heading">{t.promptTitle}</h2>
+            <p>{t.promptIntro}</p>
+          </div>
+          <button type="button" class="button button-primary guide-copy" data-copy-install data-success={t.copied} data-error={t.failed}>{t.copy}</button>
+        </div>
+        <div class="guide-code-frame">
+          <div class="guide-code-caption">NEXUM STEWARD / AGENT PROMPT</div>
+          <pre tabindex="0"><code id="guide-prompt-content">{prompt}</code></pre>
+        </div>
+        <p role="status" aria-live="polite" class="guide-copy-status" data-copy-status></p>
+      </section>
+
+      <section class="guide-resources" aria-labelledby="guide-resources-heading">
+        <h2 id="guide-resources-heading">{t.resourcesTitle}</h2>
+        <div class="guide-links">
+          <a href={installationManual} class="guide-link"><span>01</span>{t.manualLabel}<span aria-hidden="true">↗</span></a>
+          <a href={installationTemplate} target="_blank" rel="noopener noreferrer" class="guide-link"><span>02</span>{t.packageLabel}<span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+
+      <section class="guide-safety">
+        <span class="section-kicker">SECURITY / BOUNDARIES</span>
+        <h2>{t.caveatTitle}</h2>
+        <p>{t.caveatText}</p>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand"><span class="footer-dot" aria-hidden="true"></span>Nexum Steward</div>
+        <div class="footer-links"><a href={home}>{t.back}</a><a href={repo} target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+      </div>
+    </footer>
+    <script>
+      document.querySelector<HTMLButtonElement>("[data-theme-switch]")?.addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem("nexum-steward-theme", next); } catch {}
+      });
+      document.querySelector<HTMLButtonElement>("[data-copy-install]")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget as HTMLButtonElement;
+        const status = document.querySelector<HTMLElement>("[data-copy-status]");
+        try {
+          await navigator.clipboard.writeText(document.getElementById("guide-prompt-content")?.textContent ?? "");
+          if (status) status.textContent = button.dataset.success ?? "";
+        } catch {
+          if (status) status.textContent = button.dataset.error ?? "";
+        }
+      });
+    </script>
+  </body>
+</html>

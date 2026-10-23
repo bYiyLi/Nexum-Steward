@@ -61,6 +61,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
 
         <nav class="desktop-nav" aria-label="Primary">
           {t.nav.map((label, i) => <a href={sections[i]}>{label}</a>)}
+          <a class="nav-install" href={thisPath + "install/"}>{t.installNav}</a>
         </nav>
 
         <div class="header-actions">
@@ -85,6 +86,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
             </summary>
             <nav aria-label="Mobile">
               {t.nav.map((label, i) => <a href={sections[i]}>{label}</a>)}
+              <a href={thisPath + "install/"}>{t.installNav}</a>
             </nav>
           </details>
         </div>
@@ -99,7 +101,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
           <h1><span>{t.heroTitleA}</span><span class="gradient-text">{t.heroTitleB}</span></h1>
           <p class="hero-intro">{t.heroText}</p>
           <div class="hero-actions">
-            <a class="button button-primary" href={repo} target="_blank" rel="noopener noreferrer">{t.primary}<span aria-hidden="true">↗</span></a>
+            <a class="button button-primary" href={thisPath + "install/"}>{t.primary}<span aria-hidden="true">↗</span></a>
             <a class="button button-secondary" href="#workflow">{t.secondary}<span aria-hidden="true">→</span></a>
           </div>
           <ul class="hero-chips">
@@ -220,7 +222,8 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
           <p>{t.statusText}</p>
           <span class="ending-phase">{t.currentPhase}</span>
           <div class="ending-buttons">
-            <a class="button button-primary" href={repo} target="_blank" rel="noopener noreferrer">{t.sourceLink}<span aria-hidden="true">↗</span></a>
+            <a class="button button-primary" href={thisPath + "install/"}>{t.installNav}<span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href={repo} target="_blank" rel="noopener noreferrer">{t.sourceLink}<span aria-hidden="true">↗</span></a>
             <a class="button button-secondary" href={issues} target="_blank" rel="noopener noreferrer">{t.issueLink}<span aria-hidden="true">↗</span></a>
           </div>
           <p class="ending-note">{t.note}</p>
@@ -231,7 +234,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
     <footer class="site-footer">
       <div class="container footer-inner">
         <div class="footer-brand"><span class="footer-dot" aria-hidden="true"></span>Nexum Steward <small>{t.footer}</small></div>
-        <div class="footer-links"><a href={otherPath} hreflang={locale === "zh" ? "en" : "zh-CN"}>{t.language}</a><a href={repo} target="_blank" rel="noopener noreferrer">GitHub</a><a href="#overview">{t.back} ↑</a></div>
+        <div class="footer-links"><a href={thisPath + "install/"}>{t.installNav}</a><a href={otherPath} hreflang={locale === "zh" ? "en" : "zh-CN"}>{t.language}</a><a href={repo} target="_blank" rel="noopener noreferrer">GitHub</a><a href="#overview">{t.back} ↑</a></div>
       </div>
     </footer>
 

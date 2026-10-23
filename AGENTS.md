@@ -13,7 +13,7 @@
 ## 边界
 
 - 工作语言：简体中文；协议、工具名、API 标识保持原文。
-- **ChatGPT 插件，不是 Codex 专用插件**：在根目录维护符合 Agent Plugins 1.0 的 `plugin.json` 和 `mcp.json`。目前只负责复用 Nexum MCP，**不编写、安装或宣称存在产品 Skill**；Skill 将在后续单独设计。
+- **ChatGPT 插件，不是 Codex 专用插件**：官方最简空模板仅在 `templates/plugin.json`，没有预设 MCP、业务内容或产品 Skill；版本由 Git Tag 区分。AI 安装指南在根目录 `INSTALL.md`，安装提示词在 `site/src/content/`。不创建 `install/` 或版本目录，也不自建额外 MCP Server。
 - Nexum Cloud、OAuth Grant、Nexum Agent 和 Project / Files / Process 是外部既有能力，本仓库不开发独立 PaaS、Docker 专用 MCP Server、运维 Web 控制台。
 - Agent 名称用于识别，真正授权由 Nexum OAuth Grant + 稳定 Agent ID 执行；`process.exec` 以目标 OS 用户权限执行，没有命令沙箱。不能用插件文字替代后端授权、Docker 权限与持久化数据保护。
 - `site/` 是**纯静态产品介绍站**，不是 Nexum Cloud 或远程执行服务。文案必须区分已验证能力与产品方向，不能对尚未发布的运维插件使用“立即安装”“正在自动运行”等误导措辞。
