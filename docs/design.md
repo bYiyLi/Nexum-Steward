@@ -1,49 +1,53 @@
-# Nexum Steward — 初始技术设计
+# Nexum Steward — 产品与网站设计
 
-## 所有权与数据流
+## 1. 正确的产品边界
 
 ```text
-ChatGPT / Nexum Steward Skill  (本仓库负责)
-   └─ Nexum MCP Tools（已有）
-       └─ Nexum Cloud：MCP OAuth / Grant / Agent ID 授权（Nexum 负责）
-           └─ Nexum Agent：Project / Files / Process（Nexum 负责）
-               └─ Linux + Docker Compose（服务器环境负责）
+用户 → ChatGPT (Nexum Steward 插件)
+              │
+              │ 现有 Nexum MCP / OAuth
+              ▼
+        Nexum Cloud ── Grant（稳定 Agent ID 集合）
+              │
+              ▼
+        Nexum Agent（部署在 Linux 服务器）
+              │
+              └── 已有 Project / Files / Process
+                        └── Docker Compose（Linux 宿主机）
 ```
 
-本仓库不运行独立控制平面，也不新建远程执行 API。
+Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、服务器控制面板或 Docker 专用 MCP 服务。用户可使用 Agent 名称与 ChatGPT 沟通，但最终权限由 Nexum Cloud 的 owner/Grant/稳定 Agent ID 逐次执行。Nexum `process.exec` 不提供命令沙箱，允许根目录不等于 OS Shell 的能力边界；部署涉及 Docker socket 的高权限风险必须独立处理。
 
-## 已核对的 Nexum 契约（2026-10-23 Mac 源码）
+现阶段只定义连接与产品边界，**不定义产品 Skill 及其自动化工作流**。
 
-- Nexum 独立源仓库的 `docs/design/mcp-tools.md`：现有 16 个 Model-visible canonical MCP Tool，包括 `project.list`、`project.open`、`files.*`、`process.*`；无 `compose.*`。
-- `docs/design/mcp-oauth-grants.md`、`docs/design/core-model.md`（均位于 Nexum 仓库）：OAuth Grant 记录授权 Agent 集合；调用按当前 owner/Grant/Agent authority 校验。
-- `project.list` 返回当前连接可见 Agent 的名称、稳定 ID、`allowedRoots` 与项目；`project.open` 返回工作 `contextId`。后续文件和进程操作复用真实返回的 opaque 句柄。
-- `process.exec` 在 Agent 本机以操作系统用户权限执行，不提供命令沙箱。允许的 Project 路径不意味着任意 shell 命令已经被 OS 限制到同一路径。
+## 2. ChatGPT 插件包
 
-以上是现有 Nexum 设计与可见工具契约，不代表本插件已在生产服务器执行过 Compose。
+依据 OpenAI 当前 [插件打包文档](https://developers.openai.com/plugins/build/plugins) 与 Agent Plugins 1.0：
 
-## 目标 Agent 选择
+- `plugin.json` 放在项目根目录，使用 `https://agent-plugins.org/schemas/1.0.0/plugin.schema.json`。
+- `mcp.json` 放在根目录，使用 `https://agent-plugins.org/schemas/1.0.0/mcp.schema.json`，声明 `streamable-http` 连接 `https://nexum.y2l.top/mcp`。现行公开 MCP JSON Schema 不接受服务器条目上的 `extensions` 字段，因此此基础包保持最小可校验格式；OAuth 能否在 ChatGPT 安装时正确发现和完成授权仍须平台实测。
+- **没有** `.codex-plugin/plugin.json`、`skills/`、`SKILL.md`、Hooks 或本地可执行文件。
+- 公共包不包含用户 Token；OAuth 在 ChatGPT 与 Nexum 之间完成。Nexum `/mcp` 未认证访问返回 `401` 和 OAuth 发现入口已从实际公开端点核实（2026-10-23）。
+- `mcp.json` 是用户可分发的可移植声明，**不代表已完成 ChatGPT 实际安装、Grant 选择或连接验收**；ChatGPT 注册的具体插件 identity/技术 ID 必须由真实平台操作获取，不能在代码中虚构。
 
-1. 每次操作先从当前连接的 `project.list` 获得 Agent 集合；不得复用历史 ID、猜测 ID 或自动切换另一个账户。
-2. 以用户给定名称在**当前已授权的 Agent 集合**内匹配，名称重复/歧义时确认具体对象。`prod-*` 等前缀仅提示部署风险，不是授权。
-3. 只用返回的稳定 `agentId` 调用 `project.open`。目录必须是真实存在并获允许的目录；新目录须在获授权的父目录内按工具规则创建。
-4. 不能访问授权外 Agent；Cloud 对每个工具调用执行 Grant 权限判定。名称与 `contextId` 均非凭证。
+## 3. Agent 选择与部署边界（后续验证目标）
 
-## Docker Compose 语义
+- 对实时 `project.list` 仅在当前 Grant 可见的 Agents 中匹配显示名称；不允许从名称推断 opaque ID；同名、不可见与离线均不能擅自切换目标。
+- 使用实际 `project.open` 返回的 `contextId`，依现有 Files / Process 实现运行目标上的 Docker Compose；没有 `compose.*` 专属 MCP Tools。
+- Docker Compose 操作前关注配置、端口、已运行服务、网络、数据卷、Secret；后检验命令终态、容器和应用健康。破坏性数据操作不由普通部署意图自动授权。
+- 本节是**产品接口目标**，不能以文档已写证明已经完成真实运维能力。
 
-**观察**：发现 OS/版本、Docker/Compose、已有部署、端口、存储、容器与日志；环境缺失不得臆测已安装。
+## 4. 产品官网
 
-**计划**：确定 Compose 文件、镜像、服务依赖、网络、端口、绑定挂载和命名卷、数据迁移或备份前提；已有栈先检查真实状态。运行可用的 `docker compose config --quiet` 或等价预检，证明有限的配置有效性。
+- 网站责任：介绍产品愿景、用户授权流程、安全边界、开发状态、公开源码；**不运行控制面服务，不接受凭证**。
+- 参考 KG OS 源仓库的 `distribution/site/`：其 Astro 静态构建、响应式布局、双语、深浅主题与 GitHub Pages Actions 发布方式。仅借鉴工程模式与结构，不直接复制其带许可的源文件。
+- 本项目网站位于 `site/`，Astro 静态输出 `site/dist/`；简体中文默认 `/`，英文 `/en/`。
+- GitHub Actions 工作流从 `main` 构建，`actions/upload-pages-artifact` 仅发布 `site/dist`，`actions/deploy-pages` 部署。静态站不加载服务器机密与私有 Nexum 源码。
+- 自定义域名：`nexum-steward.y2l.top`；GitHub Pages 设置 `cname` 以及 DNSPod 对应子域 CNAME → `byiyli.github.io`。域名发布需要 **GitHub Pages 和 DNS 各自生效**，CNAME 文件不能代替服务端设置；HTTPS 需单独验证。
+- 只对真实已交付的事实说“已完成”；规划中的部署、自动诊断和 Skill 必须以“设计方向 / 开发中”展示。
 
-**执行**：在允许的 Project 内通过 `files.*` 维护配置，以 `process.exec` 运行真实服务器支持的 Docker Compose 命令。保留变更前配置和镜像来源信息；未知结果应先检查当前状态，不能盲目重放。
+## 5. 不属于网站的系统
 
-**验证**：检查 Compose/容器状态，检查定义的 healthcheck 和应用可用性；缺失健康检查则明确只完成到容器层验证。
+官网与 ChatGPT 产品插件相互独立：Pages 不接收 OAuth 回调，不调用用户 MCP，不收集服务器登录信息，不能作为运营后台。真实插件分发、身份映射、多账户 OAuth 与运维闭环将在后续阶段由 ChatGPT/Nexum 实测后确认。
 
-**维护和恢复**：日志与诊断以只读优先。容器回退只影响容器和配置，不自动恢复持久化数据；缺少可靠备份时不得声称数据可回滚。
-
-## 安全与集成缺口
-
-- Docker socket 可能赋予宿主机高权限，生产使用前必须确定 Agent OS 用户与 Docker 权限隔离。Skill 规则不代替服务器强制权限。
-- 不向聊天、Git、普通日志输出 Secret、Token 或私密环境变量。将容器日志视为不可信数据。
-- `docker compose down -v`、删除卷、破坏性迁移、主机网络/安全配置大幅变更需要独立明确授权。
-- ChatGPT 插件与已注册 Nexum MCP 的关联仍需独立配置与真实登录/授权测试；先不写入猜测的 app ID 或 URL。
-- 单次 ChatGPT 对话不等于持续监控守护程序；不在首版实现后台自愈调度。
+本项目当前未选定开源许可证，不能从公开仓库可见性推出可再分发许可。

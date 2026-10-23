@@ -1,32 +1,39 @@
 # Nexum Steward — 产品需求
 
-## 目标
+## 定位
 
-让已安装 Nexum 的用户为目标 Linux 服务器安装 Nexum Agent，选定允许 ChatGPT 插件管理的 Agent，然后由 ChatGPT 使用现有 Nexum MCP 与 Docker Compose 完成服务器检查、服务部署和日常运维。以用户可读 Agent 名称交流，以服务端 Agent ID 授权。
+**Nexum Steward 是使用已有 Nexum MCP 的 ChatGPT 原生服务器运维插件。**
 
-## 验收需求
+用户先安装 Nexum，在目标 Linux 服务器上安装 Nexum Agent，并在 Nexum OAuth Grant 中选择具体 Agent；ChatGPT 通过已有 Project / Files / Process Tools 在被授权服务器上完成运维和 Docker Compose 服务部署。
 
-| ID | 需求 | 可观察的验收 |
+本阶段以**正确的插件基础包和公开产品网站**为交付目标；不提前设计 Skill，不承诺自动后台值守。
+
+## 产品能力（后续集成验收）
+
+| ID | 要求 | 证据 |
 | --- | --- | --- |
-| R-01 | 复用 Nexum Cloud、OAuth、Agent 和现有 MCP 工具，不建立新的运维 MCP Server。 | 当前 `tools/list` 与插件包检查。 |
-| R-02 | 用户通过 OAuth Grant 明确选择可管理的 Agent，未授权目标必须不可操作。 | 检查授权内、授权外及撤销后的调用。 |
-| R-03 | AI 依 `project.list` 中名称确定目标；同名、模糊、离线或缺失时不能猜测。 | 负面匹配案例。 |
-| R-04 | 使用对应 Agent 的 `project.open` / Files / Process，遵守 `allowedRoots`。 | 上下文路由与目录限制实际验证。 |
-| R-05 | 支持 Docker Compose 的配置预检、部署、状态与健康验证。 | 在授权的隔离 Linux 服务器上端到端验证。 |
-| R-06 | 支持查看 Compose 服务日志、诊断和用户要求的维护动作。 | 验证实时工具输出和结束状态。 |
-| R-07 | 变更需要核对端口、服务、Secret 与数据卷，破坏性操作不得由普通部署指令自动授权。 | 端口冲突、持久化卷及拒绝案例。 |
-| R-08 | 区分命令执行成功、服务健康、数据恢复能力；失败和中断可如实恢复或停止。 | 部分成功、不可回滚场景验证。 |
-| R-09 | 有可维护的 ChatGPT 插件 Skill 模板与单独的 ChatGPT 开发 Project。 | 分别核实本地包和 ChatGPT UI 结果。 |
+| R-01 | 只连接现有 Nexum MCP，不实现额外 MCP Server/PaaS。 | 真实 `tools/list` 和仓库边界。 |
+| R-02 | 用户通过 Nexum OAuth Grant 授权选定 Agent，越权目标不可访问。 | 允许/拒绝/撤销后的真实请求。 |
+| R-03 | 按 `project.list` 的 Agent 名称唯一定位，不使用名称本身授权；同名/离线/不可见不猜测。 | 正负向选择案例。 |
+| R-04 | 使用现有 `project.open` / Files / Process，在目标 Agent 可访问的 Project 中工作。 | MCP 上下文路由与目标权限测试。 |
+| R-05 | 在用户授权范围内进行 Docker Compose 配置检查、部署、状态、日志与健康核验。 | Linux 测试主机端到端验收。 |
+| R-06 | 预检端口、网络和持久化卷，对破坏性动作保留明确授权及恢复前提。 | 数据卷、冲突、异常与恢复案例。 |
+| R-07 | 区分执行成功、容器运行、应用健康和数据恢复，不能虚报最终状态。 | 部分失败/不可恢复案例。 |
 
-上述为产品目标，未标为已实现；初始化的完成程度由 `docs/development/01-initialization.md` 记录。
+## 本阶段要求
 
-## 本次范围
+| ID | 要求 | 验收 |
+| --- | --- | --- |
+| R-08 | 插件采用 ChatGPT 支持的**根目录可移植 Agent Plugins 清单**，复用 Nexum OAuth MCP；删除 Codex 兼容脚手架。 | 检查 `plugin.json` / `mcp.json`、官方 schema 对照与路径。 |
+| R-09 | 暂不交付产品 Skill，后续在明确需求后独立设计。 | 不存在 `skills/`、产品 `SKILL.md` 或由它支撑的宣称。 |
+| R-10 | 官网为独立静态产品介绍站；不得冒充可运行后台。 | 页面源码、导航与文案评审。 |
+| R-11 | 官网提供简体中文与英文入口、响应式布局、清晰的产品流程及仓库链接。 | 本地构建 + 页面交互/移动端检查。 |
+| R-12 | GitHub Pages 从公开源码部署至 `nexum-steward.y2l.top` 并启用 HTTPS。 | workflow 成功、Pages 状态、DNS 与 HTTPS 实际检查。 |
 
-建立 Mac 上独立项目、Git、规范文档、可解析插件骨架和初版 Skill，准备 ChatGPT Project Instructions，并尽可能在具备写权限的 UI 中创建同名 Project。
+## 非目标
 
-## 明确非目标
-
-- 不开发 Dokploy 类 PaaS、Web 运维控制台或 Docker 专用 MCP Tool。
-- 不在初始化时修改 Nexum 主仓库、登录服务器、安装 Docker、部署生产服务。
-- 不承诺 ChatGPT 离线时持续监控或自行进行后台计划任务。
-- 不将 `docker compose` 容器回滚误认为数据库/数据卷回滚。
+- 本阶段不进行服务器部署或产品插件公开发布审核；**代码包存在不等于 ChatGPT 已安装**。
+- 不自建 Docker MCP Server、PaaS、仪表盘或后台守护进程。
+- 不建立或预设产品 Skill；ChatGPT Project 中用来辅助工程开发的通用 Skills 属不同层面。
+- 不把 Docker 容器回退当作持久化数据恢复。
+- 不在 GitHub Pages 运行 Nexum MCP 或存储 OAuth Token。

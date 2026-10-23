@@ -1,5 +1,7 @@
 # 项目初始化 — 范围、验收与状态
 
+> **历史记录（2026-10-23 初始版本）**：本阶段记录了早期 Codex 兼容脚手架和产品 Skill 的初始化状态。后续用户将目标明确纠正为 ChatGPT 原生插件，并决定暂不设计产品 Skill；当前有效的仓库结构及验收见 `02-chatgpt-plugin-and-website.md`，勿将本文件中的历史文件列表视为当前文件状态。
+
 ## 当前交付
 
 在 Mac 的 `~/Code/Nexum-Steward` 初始化独立工程、Git、需求、设计、AGENTS、Skill 插件骨架及 ChatGPT Project Instructions 源文件。不安装服务器服务，不修改 Nexum 主仓库，不发布插件。

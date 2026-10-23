@@ -1,0 +1,247 @@
+---
+import { copy, type Locale } from "../lib/content";
+import "../styles/site.css";
+
+interface Props {
+  locale: Locale;
+}
+
+const locale = Astro.props.locale;
+const t = copy[locale];
+const thisPath = locale === "zh" ? "/" : "/en/";
+const otherPath = locale === "zh" ? "/en/" : "/";
+const currentUrl = "https://nexum-steward.y2l.top" + thisPath;
+const repo = "https://github.com/bYiyLi/Nexum-Steward";
+const issues = repo + "/issues";
+const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
+---
+
+<!doctype html>
+<html lang={t.lang} data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="description" content={t.pageDescription} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t.pageTitle} />
+    <meta property="og:description" content={t.pageDescription} />
+    <meta property="og:url" content={currentUrl} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="canonical" href={currentUrl} />
+    <link rel="alternate" hreflang="zh-CN" href="https://nexum-steward.y2l.top/" />
+    <link rel="alternate" hreflang="en" href="https://nexum-steward.y2l.top/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://nexum-steward.y2l.top/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{t.pageTitle}</title>
+    <script is:inline>
+      try {
+        if (localStorage.getItem("nexum-steward-theme") === "light") {
+          document.documentElement.dataset.theme = "light";
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t.skip}</a>
+    <div class="page-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={thisPath} aria-label="Nexum Steward">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" width="38" height="38" fill="none">
+              <path d="M20 3L34.7 11.5V28.5L20 37L5.3 28.5V11.5L20 3Z" stroke="currentColor" stroke-width="1.8" />
+              <path d="M12.8 26V14L27.2 26V14" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" />
+              <circle cx="33" cy="8" r="3.2" fill="#81eac5" />
+            </svg>
+          </span>
+          <span>Nexum <strong>Steward</strong></span>
+        </a>
+
+        <nav class="desktop-nav" aria-label="Primary">
+          {t.nav.map((label, i) => <a href={sections[i]}>{label}</a>)}
+        </nav>
+
+        <div class="header-actions">
+          <a class="language-switch" href={otherPath} hreflang={locale === "zh" ? "en" : "zh-CN"}>{t.language}</a>
+          <button class="theme-switch" data-theme-switch aria-label={t.themeLabel} title={t.themeLabel} type="button">
+            <svg class="sun-symbol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3.5" /><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M19.07 4.93l-1.42 1.42M6.35 17.65l-1.42 1.42"/>
+            </svg>
+            <svg class="moon-symbol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 15.3A8.5 8.5 0 018.7 4 8.5 8.5 0 1020 15.3Z"/>
+            </svg>
+          </button>
+          <a class="header-repo" href={repo} target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <path d="M12 .8A11.2 11.2 0 00.8 12c0 4.95 3.2 9.14 7.65 10.62.56.11.77-.24.77-.55v-2.14c-3.11.67-3.76-1.31-3.76-1.31-.51-1.3-1.26-1.65-1.26-1.65-1.03-.7.08-.68.08-.68 1.15.08 1.76 1.19 1.76 1.19 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.72-1.52-2.48-.28-5.09-1.24-5.09-5.54 0-1.22.43-2.21 1.15-2.98-.12-.29-.5-1.41.11-2.94 0 0 .93-.3 3.08 1.14A10.8 10.8 0 0112 6.05c.95 0 1.91.13 2.8.38 2.15-1.44 3.08-1.14 3.08-1.14.61 1.53.23 2.65.11 2.94.72.77 1.15 1.76 1.15 2.98 0 4.31-2.62 5.25-5.11 5.53.41.35.77 1.03.77 2.08v3.25c0 .31.21.67.78.55A11.2 11.2 0 0023.2 12 11.2 11.2 0 0012 .8Z"/>
+            </svg>
+            GitHub
+          </a>
+          <details class="mobile-menu">
+            <summary aria-label={t.menuLabel} title={t.menuLabel}>
+              <span></span><span></span><span></span>
+            </summary>
+            <nav aria-label="Mobile">
+              {t.nav.map((label, i) => <a href={sections[i]}>{label}</a>)}
+            </nav>
+          </details>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero container" id="overview">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="status-dot" aria-hidden="true"></span>{t.kicker}</span>
+          <p class="phase-label">{t.phase}</p>
+          <h1><span>{t.heroTitleA}</span><span class="gradient-text">{t.heroTitleB}</span></h1>
+          <p class="hero-intro">{t.heroText}</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href={repo} target="_blank" rel="noopener noreferrer">{t.primary}<span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href="#workflow">{t.secondary}<span aria-hidden="true">→</span></a>
+          </div>
+          <ul class="hero-chips">
+            {t.chips.map(chip => <li><span aria-hidden="true"></span>{chip}</li>)}
+          </ul>
+        </div>
+
+        <div class="hero-preview" aria-label={t.previewTitle}>
+          <div class="preview-window">
+            <div class="window-titlebar">
+              <div class="window-controls" aria-hidden="true"><i></i><i></i><i></i></div>
+              <span>NEXUM / STEWARD</span>
+              <span class="preview-label">{t.previewMeta}</span>
+            </div>
+            <div class="preview-body">
+              <div class="preview-conversation">
+                <span class="message-avatar" aria-hidden="true">U</span>
+                <p>{t.prompt}</p>
+              </div>
+              <div class="agent-meta">
+                <span class="agent-glyph" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="3" width="15" height="6" rx="1.5"/><rect x="2.5" y="11" width="15" height="6" rx="1.5"/><circle cx="5.7" cy="6" r=".75" fill="currentColor"/><circle cx="5.7" cy="14" r=".75" fill="currentColor"/></svg></span>
+                <span><small>{t.access}</small><strong>prod-app-01</strong></span>
+                <span class="agent-connection" aria-hidden="true"></span>
+              </div>
+              <ol class="preview-steps">
+                <li><span class="step-id">01</span><div><strong>project.list</strong><small>{t.inspectDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
+                <li><span class="step-id">02</span><div><strong>project.open</strong><small>{t.planDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
+                <li><span class="step-id">03</span><div><strong>files.* / process.*</strong><small>{t.verifyDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
+              </ol>
+              <div class="preview-terminal">
+                <div class="terminal-caption"><span aria-hidden="true">$</span>{t.consoleCaption}</div>
+                <code><span>docker</span> compose config --quiet</code>
+              </div>
+            </div>
+            <p class="preview-footnote">{t.previewNote}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="foundation-section" aria-labelledby="foundation-heading">
+        <div class="container">
+          <div class="section-head wide-head">
+            <span class="section-kicker">{t.foundationKicker}</span>
+            <h2 id="foundation-heading">{t.foundationTitle}</h2>
+            <p>{t.foundationText}</p>
+          </div>
+          <div class="foundation-grid">
+            {t.pillars.map(item => (
+              <article class="foundation-card">
+                <span class="card-index">{item.n} / NEXUM</span>
+                <h3>{item.name}</h3>
+                <p>{item.detail}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section" id="capabilities" aria-labelledby="capabilities-heading">
+        <div class="container">
+          <div class="section-head split-head">
+            <div><span class="section-kicker">{t.capabilityKicker}</span><h2 id="capabilities-heading">{t.capabilityTitle}</h2></div>
+            <p>{t.capabilityNote}</p>
+          </div>
+          <div class="capability-grid">
+            {t.capabilities.map((item, i) => (
+              <article class="capability-card">
+                <div class="capability-top"><span class="capability-icon" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><span class="capability-meta">{item.key}</span></div>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section workflow-section" id="workflow" aria-labelledby="workflow-heading">
+        <div class="container">
+          <div class="section-head">
+            <span class="section-kicker">{t.workflowKicker}</span>
+            <h2 id="workflow-heading">{t.workflowTitle}</h2>
+          </div>
+          <ol class="workflow-list">
+            {t.steps.map((step, i) => (
+              <li class="workflow-step"><span class="workflow-counter">{String(i + 1).padStart(2, "0")}</span><div><h3>{step.title}</h3><p>{step.body}</p></div><span class="workflow-arrow" aria-hidden="true">↗</span></li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section class="content-section safety-section" id="safety" aria-labelledby="safety-heading">
+        <div class="container safety-layout">
+          <div class="safety-intro">
+            <span class="section-kicker">{t.safetyKicker}</span>
+            <h2 id="safety-heading">{t.safetyTitle}</h2>
+            <p>{t.safetyText}</p>
+            <div class="safety-graphic" aria-hidden="true">
+              <svg viewBox="0 0 280 185" fill="none">
+                <path d="M140 12L228 49V110C228 141 185 164 140 177C95 164 52 141 52 110V49L140 12Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M140 37L201 63V110C201 131 173 149 140 159C107 149 79 131 79 110V63L140 37Z" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5"/>
+                <path d="M110 98L132 120L174 76" stroke="#81eac5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="228" cy="49" r="7" fill="#81eac5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="safety-points">
+            {t.safety.map((item, i) => (
+              <article class="safety-point"><span>{String(i + 1).padStart(2, "0")}</span><div><h3>{item.title}</h3><p>{item.body}</p></div></article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section ending-section" aria-labelledby="ending-heading">
+        <div class="container ending-content">
+          <span class="section-kicker">{t.statusKicker}</span>
+          <h2 id="ending-heading">{t.statusTitle}</h2>
+          <p>{t.statusText}</p>
+          <span class="ending-phase">{t.currentPhase}</span>
+          <div class="ending-buttons">
+            <a class="button button-primary" href={repo} target="_blank" rel="noopener noreferrer">{t.sourceLink}<span aria-hidden="true">↗</span></a>
+            <a class="button button-secondary" href={issues} target="_blank" rel="noopener noreferrer">{t.issueLink}<span aria-hidden="true">↗</span></a>
+          </div>
+          <p class="ending-note">{t.note}</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand"><span class="footer-dot" aria-hidden="true"></span>Nexum Steward <small>{t.footer}</small></div>
+        <div class="footer-links"><a href={otherPath} hreflang={locale === "zh" ? "en" : "zh-CN"}>{t.language}</a><a href={repo} target="_blank" rel="noopener noreferrer">GitHub</a><a href="#overview">{t.back} ↑</a></div>
+      </div>
+    </footer>
+
+    <script is:inline>
+      const toggle = document.querySelector("[data-theme-switch]");
+      toggle?.addEventListener("click", () => {
+        const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem("nexum-steward-theme", next); } catch {}
+      });
+    </script>
+  </body>
+</html>

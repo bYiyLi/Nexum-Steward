@@ -1,28 +1,29 @@
 # Nexum Steward — 工程约定
 
-## 真源与职责
+## 真源
 
-- 产品需求：`docs/requirements.md`
-- 技术设计：`docs/design.md`
-- 初始化开发记录及验收：`docs/development/01-initialization.md`
-- ChatGPT Project Instructions 维护源：`docs/chatgpt-project.md`
+- 产品与验收：`docs/requirements.md`
+- 架构及网站设计：`docs/design.md`
+- 当前开发交付与状态：`docs/development/02-chatgpt-plugin-and-website.md`
+- 初始化历史记录：`docs/development/01-initialization.md`
+- ChatGPT 开发 Project Instructions 源：`docs/chatgpt-project.md`
 
-需求定义承诺，设计定义职责与接口，代码和实机工具结果证明实现，开发记录提供验收证据；不得把目标描述为已完成事实。
+需求定义用户承诺，设计定义边界，代码与真实运行结果证明实现，开发记录负责阶段结果。不要把规划中的功能当成已交付。
 
-## 基本规则
+## 边界
 
-- 开发资料采用简体中文；API、MCP Tool、CLI 和配置键保持原名称。
-- 先检查真实文件、Git、工具与环境；再按最小需求修改、验证和 review。讨论及评审默认只读，只有授权的实施请求才可写入。
-- 本仓库只拥有 ChatGPT 运维插件与 Skill，不拥有 Nexum Cloud / Agent / OAuth；不可直接更改外部 Nexum 源仓库。其本机位置必须从实时 Nexum Project 列表中确认。
-- 复用 Nexum 实际提供的 `project.*`、`files.*`、`process.*`；不要声称 `compose.*` 之类未实现的 MCP Tool 已存在。
-- Agent 名称用来匹配目标；安全授权使用实时 `project.list` 返回的稳定 Agent ID 和 Nexum 后端 Grant。不要从名称推导 ID 或越过服务端权限。
-- `process.exec` 不提供命令沙箱；Docker socket、秘密与持久化数据需要系统最小权限和操作审批。ChatGPT 的 Skill 不能替代强制安全边界。
-- 保留现有用户数据、工作区和并发修改。不为猜想需求引入运维面板、守护进程、抽象层或新依赖。
+- 工作语言：简体中文；协议、工具名、API 标识保持原文。
+- **ChatGPT 插件，不是 Codex 专用插件**：在根目录维护符合 Agent Plugins 1.0 的 `plugin.json` 和 `mcp.json`。目前只负责复用 Nexum MCP，**不编写、安装或宣称存在产品 Skill**；Skill 将在后续单独设计。
+- Nexum Cloud、OAuth Grant、Nexum Agent 和 Project / Files / Process 是外部既有能力，本仓库不开发独立 PaaS、Docker 专用 MCP Server、运维 Web 控制台。
+- Agent 名称用于识别，真正授权由 Nexum OAuth Grant + 稳定 Agent ID 执行；`process.exec` 以目标 OS 用户权限执行，没有命令沙箱。不能用插件文字替代后端授权、Docker 权限与持久化数据保护。
+- `site/` 是**纯静态产品介绍站**，不是 Nexum Cloud 或远程执行服务。文案必须区分已验证能力与产品方向，不能对尚未发布的运维插件使用“立即安装”“正在自动运行”等误导措辞。
+- 参考 KG OS 仓库的设计/Pages 架构时只读，不跨仓库复制受授权限制的代码或修改其他项目。
+- 对外发布前检查个人目录、账户内部链接、认证信息及生成产物；保留未授权的用户文件改动。
 
-## 工程检查与交付
+## 工作流和验证
 
-- 插件文件：`.codex-plugin/plugin.json`；Skill：`skills/nexum-steward/SKILL.md`。
-- 在仓库根目录运行 `node --test tests/plugin.test.mjs`（Node 24，标准库）。
-- 修改 Skill 时，检查选择条件、工具来源、权限/错误/恢复分支和完成证据；文本检查不等于模型端到端测试。
-- 完成后检查 `git status` 和真实文件变更。严格区分已创建文件、已运行测试、已提交、已推送、已安装插件、已创建 ChatGPT Project 和已部署服务器。
-- Git 提交/推送、ChatGPT UI 写入以及真实服务器变更需要各自的授权与结果，不因文档或初始化自动推定。
+- 只读讨论/评审不改文件；明确实施请求按「检查 → 修改 → 验证 → Review → 交付」执行。不得从 Git 历史或聊天推断当前工作树。
+- 项目根目录：`node --test tests/plugin.test.mjs`。
+- 网站目录：`cd site && pnpm install --frozen-lockfile && pnpm check && pnpm build`，再在仓库根目录运行 `node --test tests/site.test.mjs`。
+- 页面检查覆盖中英文、移动端、键盘焦点、可读性、导航和“未发布”状态。网站发布后分别核实 Actions、Pages、DNS、HTTPS，不能只因 workflow 文件存在就宣称域名已生效。
+- 提交前检查 `git diff --check`、提交范围、测试、公开内容；区分修改、提交、推送、CI、Pages、域名与插件真实安装。

@@ -9,6 +9,7 @@
 # Local and generated output
 .DS_Store
 node_modules/
+.astro/
 dist/
 build/
 coverage/
