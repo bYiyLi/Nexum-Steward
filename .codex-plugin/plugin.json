@@ -1,0 +1,10 @@
+{
+  "name": "nexum-steward",
+  "version": "0.1.0",
+  "description": "通过用户授权的 Nexum Agent 管理 Linux 服务器和 Docker Compose 服务。",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Nexum Steward",
+    "shortDescription": "通过 Nexum 管理服务器与 Docker Compose 部署"
+  }
+}
