@@ -14,9 +14,9 @@
 | P-02 | 移除旧 Codex/Skill 文件 | 不再存在 `.codex-plugin/plugin.json`、`skills/nexum-steward/SKILL.md`、Skill 场景文件 | 通过：文件及空目录均已删除 |
 | P-03 | 产品说明与设计同步 | README、需求、设计、AGENTS 能区分规划能力与已实现 | 通过：文档审查，历史初始化文档保留并标明已被替代 |
 | P-04 | 中英静态产品站 | `site/` 可构建，`/` 与 `/en/`，导航/主题/移动端有效 | 通过：Astro check/build、Node 测试、Mac Chrome 页面实测 |
-| P-05 | GitHub Pages 自动构建 | `main` 推送触发，构建产物和 Actions 成功 | 已创建 Pages 站点，待推送与 Actions 验收 |
+| P-05 | GitHub Pages 自动构建 | `main` 推送触发，构建产物和 Actions 成功 | 通过：`269df13` 的 Actions 构建、插件测试与 Pages 部署均为 success |
 | P-06 | 自定义域名与 HTTPS | Pages 绑定 `nexum-steward.y2l.top`，DNSPod CNAME 指向 `byiyli.github.io`，HTTPS 页面可访问 | Pages 自定义域名已绑定；DNSPod 登录阻塞，DNS 和 HTTPS 未通过 |
-| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 已完成公开内容初检；远程 SHA 及网站链接待推送后验证 |
+| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 代码与远程 SHA 一致且敏感内容检查通过；站点域名链接受 P-06 DNS 阻塞，暂不能判全部完成 |
 
 ## 技术依据
 
@@ -24,6 +24,9 @@
 - 已实际读取 Nexum Cloud 公共 `/mcp`，未认证请求返回 `401` 和 OAuth 资源发现 Header；这证明服务器端点存在，不证明插件已完成 OAuth。
 - `y2l.top` 公开 DNS NS 为 DNSPod（`horse.dnspod.net`、`dean.dnspod.net`）；`kghub.y2l.top` 现有 CNAME 指向 `byiyli.github.io`。首次检查新子域还没有 CNAME，必须独立完成 DNS 配置。
 - 2026-10-23 已通过具有仓库管理权限的 GitHub CLI 创建该仓库的 GitHub Pages 站点（`build_type=workflow`），并在 Pages 设置中绑定 `nexum-steward.y2l.top`。DNSPod 控制台访问跳转至腾讯云登录；未越过认证，也没有创建 DNS 记录。后续需在 DNSPod 添加主机记录 `nexum-steward`、类型 `CNAME`、目标 `byiyli.github.io`，等待证书签发后再次验证 HTTPS。
+- 发布提交 `269df13b3dad6f602cc67dc425fa4a9726254e5a`，对应 [GitHub Pages Actions #39936771797](https://github.com/bYiyLi/Nexum-Steward/actions/runs/39936771797)：插件检查、Astro 构建、静态产物检查、Pages 部署两个 Job 均成功；Mac 与远端 `origin/main` SHA 已比对一致，且公开源码共 26 个文件已进行 Mac 绝对路径、个人 ChatGPT 项目链接、邮箱与常见密钥格式初检。
+- 官方 Agent Plugins 1.0 在线 JSON Schema 校验：`plugin.json`、`mcp.json` 均通过。官网本地 `pnpm install --frozen-lockfile`、`pnpm check`、`pnpm build` 与 `node --test tests/plugin.test.mjs tests/site.test.mjs` 通过（6/6）。
+- 发布后 GitHub Pages 设置返回 `cname=nexum-steward.y2l.top`、`https_certificate=null`、`https_enforced=false`；DNSPod 权威服务器尚无 `nexum-steward.y2l.top` 的 CNAME。公开 URL 的 HTTPS 检查失败，GitHub 默认仓库 Pages URL 返回跳转到尚未解析的自定义域名。因此网站**已部署但自定义域名未上线**。
 - Mac Chrome 已验证中文桌面页面、390px 手机布局（无横向溢出）、深浅色主题及移动导航，英文 `/en/` 页面亦已打开核实。已恢复浏览器默认视口并关闭测试标签。
 - 网站不安装任何真实 Nexum Agent，也不触碰部署服务、Docker socket 或数据库。
 
