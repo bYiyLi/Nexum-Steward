@@ -8,7 +8,7 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 
 ## 产品网站
 
-**https://nexum-steward.y2l.top** · [GitHub](https://github.com/bYiyLi/Nexum-Steward)
+**https://nexum-steward.sites.y2l.top** · [GitHub](https://github.com/bYiyLi/Nexum-Steward)
 
 官网位于 [site/](site/)，参考 KG OS 产品网站的静态 Astro + GitHub Actions Pages 发布方式，但拥有独立的设计与内容。
 

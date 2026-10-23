@@ -10,7 +10,7 @@ const locale = Astro.props.locale;
 const t = copy[locale];
 const thisPath = locale === "zh" ? "/" : "/en/";
 const otherPath = locale === "zh" ? "/en/" : "/";
-const currentUrl = "https://nexum-steward.y2l.top" + thisPath;
+const currentUrl = "https://nexum-steward.sites.y2l.top" + thisPath;
 const repo = "https://github.com/bYiyLi/Nexum-Steward";
 const issues = repo + "/issues";
 const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
@@ -29,9 +29,9 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
     <meta property="og:url" content={currentUrl} />
     <meta name="twitter:card" content="summary" />
     <link rel="canonical" href={currentUrl} />
-    <link rel="alternate" hreflang="zh-CN" href="https://nexum-steward.y2l.top/" />
-    <link rel="alternate" hreflang="en" href="https://nexum-steward.y2l.top/en/" />
-    <link rel="alternate" hreflang="x-default" href="https://nexum-steward.y2l.top/" />
+    <link rel="alternate" hreflang="zh-CN" href="https://nexum-steward.sites.y2l.top/" />
+    <link rel="alternate" hreflang="en" href="https://nexum-steward.sites.y2l.top/en/" />
+    <link rel="alternate" hreflang="x-default" href="https://nexum-steward.sites.y2l.top/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{t.pageTitle}</title>
     <script is:inline>

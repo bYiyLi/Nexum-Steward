@@ -12,8 +12,8 @@ test("构建产物包含中英文页面、导航和 SEO", () => {
   const en = html("en/index.html");
   assert.match(zh, /<html lang="zh-CN"/);
   assert.match(en, /<html lang="en"/);
-  assert.match(zh, /https:\/\/nexum-steward\.y2l\.top\//);
-  assert.match(en, /https:\/\/nexum-steward\.y2l\.top\/en\//);
+  assert.match(zh, /https:\/\/nexum-steward\.sites\.y2l\.top\//);
+  assert.match(en, /https:\/\/nexum-steward\.sites\.y2l\.top\/en\//);
   for (const page of [zh, en]) {
     for (const id of ["overview", "capabilities", "workflow", "safety"]) {
       assert.ok(page.includes('id="' + id + '"'), "missing section " + id);

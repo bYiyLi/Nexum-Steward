@@ -15,8 +15,8 @@
 | P-03 | 产品说明与设计同步 | README、需求、设计、AGENTS 能区分规划能力与已实现 | 通过：文档审查，历史初始化文档保留并标明已被替代 |
 | P-04 | 中英静态产品站 | `site/` 可构建，`/` 与 `/en/`，导航/主题/移动端有效 | 通过：Astro check/build、Node 测试、Mac Chrome 页面实测 |
 | P-05 | GitHub Pages 自动构建 | `main` 推送触发，构建产物和 Actions 成功 | 通过：`269df13` 的 Actions 构建、插件测试与 Pages 部署均为 success |
-| P-06 | 自定义域名与 HTTPS | Pages 绑定 `nexum-steward.y2l.top`，DNSPod CNAME 指向 `byiyli.github.io`，HTTPS 页面可访问 | Pages 自定义域名已绑定；DNSPod 登录阻塞，DNS 和 HTTPS 未通过 |
-| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 代码与远程 SHA 一致且敏感内容检查通过；站点域名链接受 P-06 DNS 阻塞，暂不能判全部完成 |
+| P-06 | 自定义域名与 HTTPS | Pages 精确绑定 `nexum-steward.sites.y2l.top`，复用 `*.sites.y2l.top` 泛解析，HTTPS 页面可访问 | Pages 绑定与 DNS 通过；证书状态 approved，但实际 HTTPS 主机名校验尚未通过 |
+| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 历史版本已通过 Git 核对与公开内容检查；新域名的代码发布和 HTTPS 终态仍待验证 |
 
 ## 技术依据
 
@@ -30,9 +30,17 @@
 - Mac Chrome 已验证中文桌面页面、390px 手机布局（无横向溢出）、深浅色主题及移动导航，英文 `/en/` 页面亦已打开核实。已恢复浏览器默认视口并关闭测试标签。
 - 网站不安装任何真实 Nexum Agent，也不触碰部署服务、Docker socket 或数据库。
 
+## 2026-10-23 域名迁移（最新）
+
+- 用户决定将官网从旧的 `nexum-steward.y2l.top` 迁到 **`nexum-steward.sites.y2l.top`**。上文旧域名与 DNSPod 登录阻塞记录为当时的历史事实，不再是当前目标配置。
+- Mac 实际 DNS 查询验证：DNSPod 的两台权威服务器均解析 `nexum-steward.sites.y2l.top` 到 `byiyli.github.io`，随机子域也解析成功，证明已有 `*.sites.y2l.top` 泛解析可复用，无须给本项目再添加独立 DNS 记录。
+- 已在 GitHub Pages 设置中将本仓库精确域名绑定改成新地址，API 返回 `cname=nexum-steward.sites.y2l.top`、HTTPS certificate state `approved`，但实测 HTTPS 仍报「证书主机名不匹配」，`https_enforced=false`。仅凭 approved 状态不宣称 HTTPS 已上线。
+- 当前通配符 DNS 的存在不替代 **每个 GitHub 仓库对应的精确 Pages 域名绑定**；GitHub 对指向 Pages 的通配符记录有接管风险提示，后续应评估更安全的自动化 DNS 管理方案。本次未修改整个 DNS zone。
+- 已更新官网源码中的 SEO canonical/hreflang、Astro 站点基址、插件 `homepage`、README 与测试。需继续验证新提交的 GitHub Actions 和实际 HTTPS 服务。
+
 ## 发布与验收边界
 
-本阶段获授权修改本仓库并实施指定域名的产品官网。GitHub Actions / Pages / DNS / TLS 是不同环节：每项只依据实际终态报告。DNSPod 未登录时继续本仓库及 GitHub Pages 独立步骤；自定义域名必须保留「待 DNS 配置」状态，不用写入 `CNAME` 文件冒充 DNS 配置。GitHub Pages 已绑定自定义域名，因此其默认 Pages URL 可能自动跳转到尚未解析的自定义域名，不能把该重定向当作可访问交付。
+本阶段获授权修改本仓库并实施指定域名的产品官网。GitHub Actions / Pages / DNS / TLS 是不同环节：每项只依据实际终态报告。旧域名因 DNSPod 未登录未能解析，详见上方历史记录；新域名已经通过现有 `*.sites.y2l.top` 泛解析获得 DNS 记录，不需要再添加单独的 DNSPod 记录。仍须检查 GitHub Pages 的精确域名绑定、新版构建和 HTTPS 证书实际生效，不能用 DNS 或 GitHub API 的单项成功代替全链路验收。
 
 完成项目的提交推送必须检查完整变更、忽略规则、测试，不能把已在 Mac 构建当作线上通过。
 

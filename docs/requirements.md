@@ -28,7 +28,7 @@
 | R-09 | 暂不交付产品 Skill，后续在明确需求后独立设计。 | 不存在 `skills/`、产品 `SKILL.md` 或由它支撑的宣称。 |
 | R-10 | 官网为独立静态产品介绍站；不得冒充可运行后台。 | 页面源码、导航与文案评审。 |
 | R-11 | 官网提供简体中文与英文入口、响应式布局、清晰的产品流程及仓库链接。 | 本地构建 + 页面交互/移动端检查。 |
-| R-12 | GitHub Pages 从公开源码部署至 `nexum-steward.y2l.top` 并启用 HTTPS。 | workflow 成功、Pages 状态、DNS 与 HTTPS 实际检查。 |
+| R-12 | GitHub Pages 从公开源码部署至 `nexum-steward.sites.y2l.top` 并启用 HTTPS。 | workflow 成功、Pages 精确域名绑定、泛解析 DNS 与 HTTPS 实际检查。 |
 
 ## 非目标
 

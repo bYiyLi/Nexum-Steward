@@ -43,7 +43,7 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 - 参考 KG OS 源仓库的 `distribution/site/`：其 Astro 静态构建、响应式布局、双语、深浅主题与 GitHub Pages Actions 发布方式。仅借鉴工程模式与结构，不直接复制其带许可的源文件。
 - 本项目网站位于 `site/`，Astro 静态输出 `site/dist/`；简体中文默认 `/`，英文 `/en/`。
 - GitHub Actions 工作流从 `main` 构建，`actions/upload-pages-artifact` 仅发布 `site/dist`，`actions/deploy-pages` 部署。静态站不加载服务器机密与私有 Nexum 源码。
-- 自定义域名：`nexum-steward.y2l.top`；GitHub Pages 设置 `cname` 以及 DNSPod 对应子域 CNAME → `byiyli.github.io`。域名发布需要 **GitHub Pages 和 DNS 各自生效**，CNAME 文件不能代替服务端设置；HTTPS 需单独验证。
+- 自定义域名：`nexum-steward.sites.y2l.top`；沿用已有 DNSPod `*.sites.y2l.top` → `byiyli.github.io` 泛解析。**仍需为本 GitHub Pages 仓库单独绑定精确域名**（Pages `cname`）并验证 HTTPS。通配符 DNS 不会自动把不同项目路由到不同仓库，也不能代替 GitHub Pages 站点绑定；GitHub 官方不建议直接使用通配符指向 Pages，需关注域名接管风险，后续可改为自动化管理精确 DNS 记录。
 - 只对真实已交付的事实说“已完成”；规划中的部署、自动诊断和 Skill 必须以“设计方向 / 开发中”展示。
 
 ## 5. 不属于网站的系统

@@ -12,7 +12,7 @@ test("ChatGPT 插件使用可移植清单，不包含 Codex 兼容包或产品 S
   assert.equal(manifest.$schema, "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json");
   assert.equal(manifest.name, "nexum-steward");
   assert.match(manifest.version, /^\d+\.\d+\.\d+$/);
-  assert.equal(manifest.homepage, "https://nexum-steward.y2l.top");
+  assert.equal(manifest.homepage, "https://nexum-steward.sites.y2l.top");
   assert.equal(manifest.repository, "https://github.com/bYiyLi/Nexum-Steward");
   assert.ok(manifest.description?.includes("ChatGPT"));
   assert.equal(manifest.skills, undefined);
@@ -47,5 +47,5 @@ test("网站源与自定义域名配置一致", () => {
     "site/src/pages/index.astro", "site/src/pages/en/index.astro",
     "site/src/lib/content.ts", ".github/workflows/pages.yml"
   ]) assert.ok(existsSync(resolve(root, path)), path);
-  assert.match(read("site/astro.config.mjs"), /https:\/\/nexum-steward\.y2l\.top/);
+  assert.match(read("site/astro.config.mjs"), /https:\/\/nexum-steward\.sites\.y2l\.top/);
 });

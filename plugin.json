@@ -3,7 +3,7 @@
   "name": "nexum-steward",
   "version": "0.1.0",
   "description": "ChatGPT plugin for Linux server operations and Docker Compose deployment through user-authorized Nexum Agents.",
-  "homepage": "https://nexum-steward.y2l.top",
+  "homepage": "https://nexum-steward.sites.y2l.top",
   "repository": "https://github.com/bYiyLi/Nexum-Steward",
   "keywords": ["chatgpt", "nexum", "mcp", "linux", "docker-compose", "operations"]
 }
