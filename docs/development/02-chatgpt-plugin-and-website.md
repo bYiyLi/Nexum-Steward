@@ -14,9 +14,9 @@
 | P-02 | 移除旧 Codex/Skill 文件 | 不再存在 `.codex-plugin/plugin.json`、`skills/nexum-steward/SKILL.md`、Skill 场景文件 | 通过：文件及空目录均已删除 |
 | P-03 | 产品说明与设计同步 | README、需求、设计、AGENTS 能区分规划能力与已实现 | 通过：文档审查，历史初始化文档保留并标明已被替代 |
 | P-04 | 中英静态产品站 | `site/` 可构建，`/` 与 `/en/`，导航/主题/移动端有效 | 通过：Astro check/build、Node 测试、Mac Chrome 页面实测 |
-| P-05 | GitHub Pages 自动构建 | `main` 推送触发，构建产物和 Actions 成功 | 通过：`269df13` 的 Actions 构建、插件测试与 Pages 部署均为 success |
-| P-06 | 自定义域名与 HTTPS | Pages 精确绑定 `nexum-steward.sites.y2l.top`，复用 `*.sites.y2l.top` 泛解析，HTTPS 页面可访问 | Pages 绑定与 DNS 通过；证书状态 approved，但实际 HTTPS 主机名校验尚未通过 |
-| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 历史版本已通过 Git 核对与公开内容检查；新域名的代码发布和 HTTPS 终态仍待验证 |
+| P-05 | GitHub Pages 自动构建 | `main` 推送触发，构建产物和 Actions 成功 | 通过：`c8b756b` 的 [Actions #39942955471](https://github.com/bYiyLi/Nexum-Steward/actions/runs/39942955471) 构建及 Pages 部署成功 |
+| P-06 | 自定义域名与 HTTPS | Pages 精确绑定 `nexum-steward.sites.y2l.top`，复用 `*.sites.y2l.top` 泛解析，HTTPS 页面可访问 | 通过：DNS 权威解析、Pages `cname`、独立 HTTPS 证书及强制 HTTPS 设置均已核验；中英文在线页面均返回 200 |
+| P-07 | 交付核查 | Mac/远程 Git SHA 一致，公开内容无密钥或个人路径，实际链接打开验证 | 通过：发布提交 `c8b756b` 与远端 `main` 一致、Mac 工作区干净、公开内容检查通过、两种语言线上 HTTPS 可访问 |
 
 ## 技术依据
 
@@ -36,7 +36,8 @@
 - Mac 实际 DNS 查询验证：DNSPod 的两台权威服务器均解析 `nexum-steward.sites.y2l.top` 到 `byiyli.github.io`，随机子域也解析成功，证明已有 `*.sites.y2l.top` 泛解析可复用，无须给本项目再添加独立 DNS 记录。
 - 已在 GitHub Pages 设置中将本仓库精确域名绑定改成新地址，API 返回 `cname=nexum-steward.sites.y2l.top`、HTTPS certificate state `approved`，但实测 HTTPS 仍报「证书主机名不匹配」，`https_enforced=false`。仅凭 approved 状态不宣称 HTTPS 已上线。
 - 当前通配符 DNS 的存在不替代 **每个 GitHub 仓库对应的精确 Pages 域名绑定**；GitHub 对指向 Pages 的通配符记录有接管风险提示，后续应评估更安全的自动化 DNS 管理方案。本次未修改整个 DNS zone。
-- 已更新官网源码中的 SEO canonical/hreflang、Astro 站点基址、插件 `homepage`、README 与测试。需继续验证新提交的 GitHub Actions 和实际 HTTPS 服务。
+- 已更新官网源码中的 SEO canonical/hreflang、Astro 站点基址、插件 `homepage`、README 与测试，并提交推送 `c8b756b101e215f8e044d6cdb4d0ca6d513fa4cf`。对应 GitHub Actions #39942955471 的构建与 Pages 发布均为 `success`。
+- **迁移最终验收**：GitHub Pages 返回 `cname=nexum-steward.sites.y2l.top`、`https_certificate.state=approved` 和 `https_enforced=true`；随后 Mac 通过正常 HTTPS 请求验证 `/` 与 `/en/` 均为 HTTP 200、`ssl_verify_result=0`，直连 GitHub Pages 服务器获取的证书 SAN 也包含精确子域。此前的证书主机名不匹配属于绑定刚完成时的过渡状态，已消失。
 
 ## 发布与验收边界
 
