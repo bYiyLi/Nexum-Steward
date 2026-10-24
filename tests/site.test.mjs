@@ -141,3 +141,22 @@ test("内部链接均指向存在的页面或锚点，场景始终标注非执�
   assert.match(html("index.html"), /交互示意 · 非实际执行/);
   assert.match(html("en/index.html"), /Illustration · Not executed/);
 });
+
+test("创建器选择说明位于复制正文之外，不改变可复制短提示词", async () => {
+  for (const locale of ["zh", "en"]) {
+    const page = html(locale === "zh" ? "install/index.html" : "en/install/index.html");
+    const instruction = page.match(/<div class="guide-creator-tip"[^>]*data-creator-instructions[^>]*>([\s\S]*?)<\/div>/)?.[1];
+    assert.ok(instruction, `${locale}: creator instructions missing`);
+    assert.match(instruction, /Plugin Creator/);
+    assert.match(instruction, /@/);
+    assert.ok(page.indexOf("data-creator-instructions") < page.indexOf('id="guide-prompt-content"'));
+    const visiblePrompt = promptParagraphs(page).map(p => p.textContent).join("\n");
+    assert.doesNotMatch(visiblePrompt, /Plugin Creator|@plugin-creator|@/);
+    const dom = promptDOM(page);
+    let copied;
+    bindInstallPrompt(dom.root, { writeText: async value => { copied = value; } });
+    await dom.events.copy();
+    assert.equal(copied, visiblePrompt);
+    assert.ok(!copied.includes(instruction));
+  }
+});

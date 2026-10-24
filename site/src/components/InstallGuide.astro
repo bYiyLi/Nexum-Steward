@@ -75,6 +75,7 @@ const repo = "https://github.com/bYiyLi/Nexum-Steward";
       <div class="guide-heading"><p class="section-kicker">{t.phase}</p><h1>{t.heading}</h1><p class="guide-intro">{t.introduction}</p></div>
       <section class="guide-prompt" aria-labelledby="guide-prompt-heading">
         <div class="guide-prompt-head"><h2 id="guide-prompt-heading">{t.promptTitle}</h2><button type="button" class="button button-primary guide-copy" data-copy-install data-success={t.copied} data-error={t.failed}>{t.copy}<span aria-hidden="true">⧉</span></button></div>
+        <div class="guide-creator-tip" data-creator-instructions><p>{t.creatorInstruction}</p><p class="guide-creator-availability">{t.creatorAvailability}</p></div>
         <div id="guide-prompt-content" class="guide-prompt-text" tabindex="0" aria-label={t.promptTitle}>{prompt.split("\n").map(line => <p>{line.startsWith("https://") ? <span class="prompt-url">{line}</span> : line}</p>)}</div>
         <div class="guide-copy-feedback"><p role="status" aria-live="polite" data-copy-status></p><button type="button" class="text-button" data-select-install data-selected={t.selected}>{t.select}</button></div>
       </section>

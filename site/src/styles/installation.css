@@ -163,3 +163,20 @@
 .install-back {
   display:none}
 }
+
+.guide-creator-tip {
+  padding: 17px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.guide-creator-tip .guide-creator-availability {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--quiet);
+}
+@media (max-width: 560px) {
+  .guide-creator-tip { padding: 15px 18px; }
+}
