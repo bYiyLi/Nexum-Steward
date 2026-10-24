@@ -6,11 +6,11 @@
 
 本计划是一个开发单元，D-01～D-05 为内部阶段。依据为用户已审阅的本计划实施要点、[需求](../requirements.md)、[设计](../design.md)与现有 steward-spec；不改写 [02 历史交付](02-chatgpt-plugin-and-website.md)。
 
-## 前提与交付约束
+## 首次实现的前提与交付约束
 
 - 2026-10-24 从干净 `main` fetch 并快进到 `571e92eb7cd80ebaaf8dad7d9b152b3259605541`；本任务在 `feat/steward-doctor` 独立分支进行。源码取自当前工作树，不沿用其他任务的通过记录。
 - 仅本仓库的实现、文档、静态测试与网站构建；允许本分支提交、推送。不得推 main、合并、发布 Tag、主动部署网站、修改已安装私人插件、运行真实服务器诊断或 Docker 变更。
-- 本次截止 2026-10-24 05:05 UTC；完成或到期停止。独立模型行为测试和真实 Linux 验收不在本次执行范围，完整运行验收保持 pending。
+- 首次实现授权截止 2026-10-24 05:05 UTC，已于 04:52 UTC 完成交付并停止；后续小范围续跑另见本文件末节。独立模型行为测试和真实 Linux 验收不在该次执行范围，完整运行验收保持 pending。
 
 ## 内部阶段与验收
 
@@ -32,7 +32,7 @@
 
 ## 执行证据与剩余验收
 
-本节记录 2026-10-24 本地 checkout `feat/steward-doctor`、基线 `571e92eb7cd80ebaaf8dad7d9b152b3259605541` 之上的源码提交 [`1dc53d71aafd8af266ce3f8347302d10963fa24c`](https://github.com/bYiyLi/Nexum-Steward/commit/1dc53d71aafd8af266ce3f8347302d10963fa24c)。检查使用 Node.js 24.15.0、pnpm 10.34.5；后续文档提交仅补记本节的 Git/CI 交付证据。
+本节记录 2026-10-24 本地 checkout `feat/steward-doctor`、基线 `571e92eb7cd80ebaaf8dad7d9b152b3259605541` 之上的源码提交 [`1dc53d71aafd8af266ce3f8347302d10963fa24c`](https://github.com/bYiyLi/Nexum-Steward/commit/1dc53d71aafd8af266ce3f8347302d10963fa24c)。该次检查使用 Node.js 24.15.0、pnpm 10.34.5；随后 `805ec4b6933d7812cb7ae1b21b51c9c4837ffb68` 仅补记本节的 Git/CI 交付证据。本轮场景增量见末节。
 
 | 状态层次 | 本次证据 |
 | --- | --- |
@@ -49,3 +49,12 @@
 首次依赖安装因默认 Node 22 和非交互重建中止；随后使用本机已有 Node 24.15.0、`CI=true` 与临时 store，沙箱 DNS 失败后经宿主批准联网执行 `pnpm install --frozen-lockfile --store-dir /tmp/nexum-steward-pnpm-store --fetch-retries 0 --fetch-timeout 20000`，成功安装锁定依赖。未改变锁文件；移除了本任务失败安装产生的仓库缓存。页面预览常用端口被已有站点占用，改用当前项目独立 loopback 端口；未操作其他仓库或其服务。
 
 本地静态交付已验证；整体运行验收：**pending**。以上场景文件是执行前的验收定义，没有将文本推演记为模型或 Linux 已通过。
+
+## 2026-10-24 complete 对照场景补充
+
+- 本轮为 D-04/D-05 的文档补充，仅修改本计划及 `tests/steward-doctor-scenarios.md`；不改变技能正文、测试代码、其他文档或网站。授权最多 10 分钟且不晚于 05:09 UTC，完成即停止。用户随后明确将交付目标改为 main，并批准既有 doctor 与本轮两文档补充安全合入、推送 main 及随之触发 CI/公开网站部署；保留 feature 分支，不创建/合并 PR，不改已安装插件。本轮批准仅适用于本任务，首次实现的 no-main/no-deploy 是上节历史范围。
+- 05:00 UTC 核对本地工作树干净；安全 fetch 任务分支后，本地与 `origin/feat/steward-doctor` 均为 `805ec4b6933d7812cb7ae1b21b51c9c4837ffb68`，无分叉或待快进项。未操作 main。
+- 05:03 UTC 按新授权 fetch main：本地 main 与 `origin/main` 同为 `571e92eb7cd80ebaaf8dad7d9b152b3259605541`，没有其他新提交；该提交是 doctor 分支 HEAD 的祖先，具备快进条件。先提交已检查的两文件差异，再快进 main；不覆盖或重写历史。最终推送及 CI 状态以实际远程 ref/运行记录核实。
+- 新增 C01（A）、C02（B）：相同有限 jq 检查范围和明确版本/路径/当前用户基线，所有必需证据齐备；A 全部符合，报告 complete 且限定范围内未发现异常；B 仅版本不符合，仍报告 complete 并列明异常。两例均禁止重复索取已覆盖的读取授权。检查完整、环境符合与证据不足分别表达，不扩大为全机健康，也不把异常本身当作 partial。
+- 本轮提交前工作树检查（上述 `805ec4b` 基线之上的两文件差异）：Node.js 24.15.0 运行 `node --test tests/plugin.test.mjs` 11/11 通过，`git diff --check` 通过；文档静态检查确认仅两文件变化、31 个用例 ID 唯一、场景表均为七列、4 个本地链接路径/大小写可达，公开内容初检通过。两文件一致性 review 已完成，核对同一基线、单一版本变量、调用边界、停止/覆盖/证据及 complete/符合/未知的区别，范围内无未解决发现；这些结果仅证明文档/包静态状态，不能证明模型行为。实际提交/推送 SHA 在交付时以本分支 Git ref 核实。
+- 两个用例已补不等于模型行为已测；本轮不执行独立模型、Linux 或 ChatGPT 安装/发现验收。无网站输入变化，本轮不重复网站依赖安装、构建或页面检查；首次检查证据仍保留在上节，完整运行验收仍为 **pending**。
