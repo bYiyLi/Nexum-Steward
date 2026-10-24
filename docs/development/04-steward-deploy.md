@@ -30,11 +30,11 @@
 
 - 计划：未发现同名/同主题既有 04 计划；本文件为单一新增计划。
 - 实现：U-01～U-03 已落地；一个 deploy SKILL 与单个条件升级 reference，无新增脚本/输出资产；A～J 和报告判断在核心中。共同 data 和新增配置 Git 规则由 spec 持有；四环境模板保留独立边界，dev 源码构建许可保留。
-- 本地检查：Node.js 24.15.0，pnpm 10.34.5。插件静态 17/17、网站产物 4/4 通过（合计 21）；新增递归模板、空资源、A～J 删除、endpoint/时间前提删除负例，保留 doctor/setup/四环境回归。`pnpm install --frozen-lockfile --store-dir /tmp/nexum-steward-deploy-pnpm-store --fetch-retries 0 --fetch-timeout 20000` 经正常联网批准安装锁定依赖；`pnpm check` 11 文件、0 errors/warnings/hints，`pnpm build` 四页面与 INSTALL.md 成功。初次安装沙箱 DNS 不可达，未伪报通过，审批后成功；锁文件未变。
+- 本地检查：Node.js 24.15.0，pnpm 10.34.5。插件静态 18/18、网站产物 4/4 通过（合计 22，含两项后续扩展）；新增递归模板、空资源、A～J 删除、endpoint/时间前提删除负例，保留 doctor/setup/四环境回归。`pnpm install --frozen-lockfile --store-dir /tmp/nexum-steward-deploy-pnpm-store --fetch-retries 0 --fetch-timeout 20000` 经正常联网批准安装锁定依赖；`pnpm check` 11 文件、0 errors/warnings/hints，`pnpm build` 四页面与 INSTALL.md 成功。初次安装沙箱 DNS 不可达，未伪报通过，审批后成功；锁文件未变。
 - 页面：Chrome 实际访问中英首页与安装页，默认桌面及 390×844 移动端可读、无横向溢出；两语言首页首 Tab 为 skip link、2px outline 可见；中文手机导航展开并到达安装页，安装页语言切换有效，未发布/未验收状态仍在。视口已恢复，临时标签关闭；本项目 127.0.0.1:43927 预览经审批启动并已正常停止，没有操作已有端口服务。
-- Review：按三项开发/提示词/Skill 规范及其适用资源检查单一 workflow 职责、四技能选择、资源缺失、有效输入、授权、数据不可逆点、过程身份/终态、取消/期限、报告证据、Git 内容/范围/远程与失败状态。修正需求新增表格断开、fixture 中 continuation 判定提示/误填未来时间、旧禁止自动推送与 .env 一刀切、独立模板明文保护不明确；原 doctor 核心和 03 历史未改。41 例仅做合同 walkthrough 和静态检查，不是模型结果。
+- Review：按三项开发/提示词/Skill 规范及其适用资源检查单一 workflow 职责、四技能选择、资源缺失、有效输入、授权、数据不可逆点、过程身份/终态、取消/期限、报告证据、Git 内容/范围/远程与失败状态。修正需求新增表格断开、fixture 中 continuation 判定提示/误填未来时间、旧禁止自动推送与 .env 一刀切、独立模板明文保护不明确；doctor 仅在后续加载扩展调整入口句，03 历史未改。50 例仅做合同 walkthrough 和静态检查，不是模型结果。
 - 文档同步：requirements/design/README/AGENTS/INSTALL/Project Instructions 源、02 导航、双语网站/提示词及测试同步；未新建第二计划/导航体系。plugin.json 不变：最简发现结构不需新增字段，未发布 Tag；CI 路径已覆盖 templates/tests，无需改 workflow/权限。仓库根 `.gitignore` 保护开发工作区，不是服务器忽略模板，不因 .env 产品分类变更而放宽；服务器生成忽略规则由 setup 调整。doctor 仍只读；不更新已安装插件/UI 指令副本。
-- Git/CI：待最终提交、整合与远端核验；不得由上述本地结果推断 CI 或 Pages 已成功。
+- Git/CI：源码提交 `70241e2f4f3957461481a9cdf85c2073407c9665` 已在独立分支提交，经主工作树干净、main 与 origin/main 同步检查后安全快进整合并推送；`git ls-remote` 确认远端 main 同一 SHA。下方记录实际 CI/发布证据。
 - ChatGPT 安装/发现、独立模型与真实 Linux 部署：not run，本次排除；整体运行验收 pending。
 
 ## 同轮已批准扩展：配置 Git
@@ -43,6 +43,16 @@
 
 ## 同轮已批准扩展：个人规范渐进加载
 
-2026-10-24 05:29 UTC 后用户批准 spec 定义目标 OS 用户个人 `~/.agents/AGENTS.md` 的复用/显式读取契约；setup/doctor/deploy 只加必要入口与缺失分支，需求 R-33、设计及 L01～L09 判定同步。先身份再读取，不形成循环；完整上下文可复用，截断/仅读路径不得冒充已加载；遵守宿主权威、不凭文件扩大权限。仍不新增加载 Skill/同步系统，不改真实服务器或已安装插件，不延时。上节“doctor 核心未改”是首次 review 时状态，本增量只调整其入口加载句，03 历史与只读边界保持不变。
+2026-10-24 05:29 UTC 后用户批准 spec 定义目标 OS 用户个人 `~/.agents/AGENTS.md` 的复用/显式读取契约；setup/doctor/deploy 只加必要入口与缺失分支，需求 R-33、设计及 L01～L09 判定同步。先身份再读取，不形成循环；完整上下文可复用，截断/仅读路径不得冒充已加载；遵守宿主权威、不凭文件扩大权限。仍不新增加载 Skill/同步系统，不改真实服务器或已安装插件，不延时。本增量只调整 doctor 的入口加载句，03 历史与只读边界保持不变。
 
 最新复核：个人加载扩展后，Node 插件 18/18、网站产物 4/4（合计 22）通过；50 个独立输入 ID 和判定均可定位。全部 25 个任务文件已检查，40 个本地链接可达、Markdown 表格列数一致、公开个人路径/常见凭证模式初检通过，`git diff --check` 通过。按最终四技能集合重看职责/选择/资源路线/缺失/拒绝/中断/结论：review 范围内无未解决的任务相关发现；文本合同与 walkthrough 不能证明模型实际遵从。后两项扩展未改变网站构建输入，因此不重复未受影响的安装、check/build 或页面操作；插件回归已重跑。
+
+## Git、CI 与官网交付证据
+
+- 源码提交：[70241e2](https://github.com/bYiyLi/Nexum-Steward/commit/70241e2f4f3957461481a9cdf85c2073407c9665)。2026-10-24 05:33 UTC 核对独立分支、主工作树 main、origin/main 与远端 main 均为同一完整 SHA，工作树干净；保留临时开发分支与独立 worktree，没有强推、reset、clean 或 stash。
+- [Actions #40066694580](https://github.com/bYiyLi/Nexum-Steward/actions/runs/40066694580) 是该 SHA 的 main push 运行；05:34 UTC 读取最终 `status=completed`、`conclusion=success`。Build and verify static website 与 Publish GitHub Pages 两个 Job 均 success，分别在 05:33:38Z 与 05:33:51Z 完成。
+- Pages API 核实精确 `cname=nexum-steward.sites.y2l.top`、证书 approved、`https_enforced=true`。本机系统 A 解析受到网络代理合成地址影响，不作为公开 DNS 地址证据；另查 CNAME 及 `horse.dnspod.net` 权威回答均为 `byiyli.github.io.`，NS 为 horse/dean.dnspod.net。
+- 正常 TLS 默认信任与主机名验证下，`/`、`/en/`、`/install/`、`/en/install/` 全部 HTTP 200，且各页面含新版 steward-deploy 文案。仅验证产品静态站，不是业务服务或私人插件实装。
+- 本文件后续仅补交付证据，不改变插件/网站输入；现有 workflow 的路径过滤不为 docs-only 提交触发新构建。证据提交的最终 SHA/远端状态在最终交付报告核对，不能把源码 SHA 的 CI冒充未触发的新运行。
+
+U-01～U-05 的源码、本地检查与 review 已完成，源码已整合推送且对应 CI/Pages 通过。产品完整运行验收继续 **pending**：独立模型、隔离 Linux（含真实数据/过程控制）、ChatGPT 安装/发现均 not run；本次未访问真实服务器、上传实际秘密、创建凭证、修改生产 Docker 或已安装插件。授权完成即停止，未使用剩余时间扩展范围。
