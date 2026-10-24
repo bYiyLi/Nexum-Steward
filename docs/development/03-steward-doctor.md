@@ -32,7 +32,7 @@
 
 ## 执行证据与剩余验收
 
-本节记录 2026-10-24 本地 checkout `feat/steward-doctor`、基线 `571e92eb7cd80ebaaf8dad7d9b152b3259605541` 之上的本任务工作树。检查使用 Node.js 24.15.0、pnpm 10.34.5；提交/推送终态另以实际 Git ref 核实，不能从计划文字推定。
+本节记录 2026-10-24 本地 checkout `feat/steward-doctor`、基线 `571e92eb7cd80ebaaf8dad7d9b152b3259605541` 之上的源码提交 [`1dc53d71aafd8af266ce3f8347302d10963fa24c`](https://github.com/bYiyLi/Nexum-Steward/commit/1dc53d71aafd8af266ce3f8347302d10963fa24c)。检查使用 Node.js 24.15.0、pnpm 10.34.5；后续文档提交仅补记本节的 Git/CI 交付证据。
 
 | 状态层次 | 本次证据 |
 | --- | --- |
@@ -41,7 +41,7 @@
 | 本地检查 | 插件 `node --test tests/plugin.test.mjs` 11/11；网站 `pnpm check` 11 文件、0 错误/警告/提示；`pnpm build` 四页面及 INSTALL.md 成功；`node --test tests/site.test.mjs` 3/3；`git diff --check` 通过。资源图测试含递归、循环、缺失、大小写与包外路径负例；保留 setup/四环境回归 |
 | 页面检查 | Chrome 实际打开本地构建的中英首页与安装页；默认桌面和 390×844 移动布局无横向溢出，状态说明可读；两语言键盘首焦点可见（2px outline），移动导航可展开并到达安装页，语言切换有效，未发布/待验收声明保留。临时视口已恢复；没有发布网站 |
 | Review | D-05 源码/文本 review 覆盖选择与职责、依赖可读、Docker 请求前归属、只读权限、日志/敏感输出、证据时效与报告归宿；发现并修正旧提示词“空模板”、安装页漏列 doctor、既有指令表述和必需项范围歧义。进一步明确相关性不等于因果。受影响检查重跑；当前 review 范围内无未解决的任务相关发现，不代表模型行为或运行无缺陷 |
-| 提交 / 推送 / CI | 本节为提交前证据；实际提交和分支推送在交付时核实。现有 workflow 仅 main push / 手动触发，本次不改触发器、不推 main、不手动运行部署；不能将本地通过说成 CI 通过 |
+| 提交 / 推送 / CI | 源码 `1dc53d7` 已提交并推送 `origin/feat/steward-doctor`；本地/跟踪 ref 一致、工作树干净，GitHub 插件已读取同一 SHA。2026-10-24 04:51 UTC 的 `gh run list` 按分支及完整 SHA 查询返回空数组；CI 未触发，不是通过。现有 workflow 仅 main push / 手动触发，本次不改触发器、不推 main、不手动运行部署 |
 | ChatGPT 实际发现 | 未运行；本次不修改已安装私人插件 |
 | 独立模型行为 | 未运行；本次未授权执行此类验收 |
 | Linux 实测 | 未运行；本次禁止真实服务器诊断，隔离环境仍需另行授权 |
