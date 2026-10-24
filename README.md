@@ -4,7 +4,7 @@
 
 Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 服务部署插件。Docker 管理范围仅限目标 Nexum Agent 所在服务器的本机 Engine，不支持远程 Daemon。用户先安装 Nexum，在目标 Linux 服务器安装 Nexum Agent，并在 Nexum OAuth Grant 中明确选择可管理的 Agent；插件通过既有 Nexum MCP 调用 Project / Files / Process 工具，无须另建 PaaS、Docker 专用 MCP Server 或 Web 运维后台。
 
-> **当前状态：私人插件模板、`steward-spec`、`steward-setup` 与 `steward-doctor` 已写入源码，尚未完成 ChatGPT 安装/发现、独立模型行为及真实 Linux 初始化/诊断验收。** doctor 只诊断并交付报告，不自动修复。模板不预置 MCP 连接；用户需在自己的账户创建、安装并验证插件，连接与授权由现有 Nexum 应用处理。
+> **当前状态：私人插件模板、`steward-spec`、`steward-setup`、`steward-doctor` 与 `steward-deploy` 已写入源码，尚未完成 ChatGPT 安装/发现、独立模型行为及真实 Linux 初始化/诊断/部署验收。** doctor 只诊断并交付报告，不自动修复；deploy 先规划确认再变更，首版只使用现成镜像或已有 Compose，不构建源码。模板不预置 MCP 连接；用户需在自己的账户创建、安装并验证插件，连接与授权由现有 Nexum 应用处理。
 
 ## 产品网站
 
@@ -23,11 +23,13 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 | [templates/skills/steward-setup/SKILL.md](templates/skills/steward-setup/SKILL.md) | 服务器环境初始化 Skill：软件准备、服务根目录、Git、日志和个人 AGENTS.md |
 | [templates/skills/steward-setup/assets/](templates/skills/steward-setup/assets/) | dev、qa、pro、prod 四份环境运维规范模板 |
 | [templates/skills/steward-doctor/SKILL.md](templates/skills/steward-doctor/SKILL.md) | 环境体检、指定对象或症状诊断；只读取证并报告，不自动修复 |
+| [templates/skills/steward-deploy/SKILL.md](templates/skills/steward-deploy/SKILL.md) | 服务首次部署、升级、配置调整与安全续作；计划确认、过程控制及分层验收 |
 | [INSTALL.md](INSTALL.md) | AI Agent 使用的私人插件安装指南 |
 | [site/](site/) | 产品官网（GitHub Pages 静态站） |
 | [docs/requirements.md](docs/requirements.md) | 需求与验收边界 |
 | [docs/design.md](docs/design.md) | 插件和网站技术设计 |
-| [docs/development/03-steward-doctor.md](docs/development/03-steward-doctor.md) | 当前 doctor 实施、证据与待验收项 |
+| [docs/development/04-steward-deploy.md](docs/development/04-steward-deploy.md) | 当前 deploy 单一计划、检查证据与待验收项 |
+| [docs/development/03-steward-doctor.md](docs/development/03-steward-doctor.md) | doctor 历史实施、证据与待验收项 |
 | [docs/development/02-chatgpt-plugin-and-website.md](docs/development/02-chatgpt-plugin-and-website.md) | 插件与网站历史交付 |
 | [docs/chatgpt-project.md](docs/chatgpt-project.md) | 维护者的 ChatGPT 开发 Project Instructions 模板 |
 
@@ -39,7 +41,10 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 2. 用户在 Nexum 的 OAuth 授权中选择插件允许管理的 Agent。
 3. ChatGPT 根据实时 `project.list` 返回的名称唯一定位 Agent，操作权限由服务端 Grant + 稳定 Agent ID 校验。
 4. ChatGPT 复用现有 `project.open`、`files.*`、`process.*` 工具检查环境并操作 Docker Compose。
-5. 操作前检查端口、持久化卷及风险；操作后核实容器与应用健康，不能把命令成功当成业务可用。
+5. deploy 先只读规划，明确目标、有效 Compose 输入、数据不可逆点、过程控制和验收项；用户确认具体修订后复核执行，最后按同项报告。
+6. 持久数据优先服务目录下 `data` + bind mount，既有卷或应用要求说明例外、不擅迁移。配置解析、容器运行、应用健康、用户入口和数据恢复分别核验，不能互相替代。
+
+服务器配置 Git 的共同规则见 [steward-spec](templates/skills/steward-spec/SKILL.md)：用于追溯和重建材料同步，非敏感 `.env` 可提交，敏感配置优先加密。推荐独立私有仓库；明确远程、分支及管理范围后，及时定向提交并在已确认授权内推送，分别报告配置、提交、同步和业务验收。
 
 Nexum `process.exec` 不是命令沙箱，Docker socket 权限可能很高。Skill 或提示词不能代替实际的权限隔离、数据备份和风险审批。
 

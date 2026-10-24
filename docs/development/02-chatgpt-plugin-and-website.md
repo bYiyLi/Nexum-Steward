@@ -1,6 +1,6 @@
 # 02 — ChatGPT 插件基础与 GitHub Pages 官网
 
-后续环境诊断增量与当前状态见 [03 — steward-doctor](03-steward-doctor.md)。本文件保留此前阶段的范围和结果。
+后续环境诊断增量见 [03 — steward-doctor](03-steward-doctor.md)，当前部署升级增量与状态见 [04 — steward-deploy](04-steward-deploy.md)。本文件保留此前阶段的范围和结果。
 
 ## 目标
 

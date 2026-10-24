@@ -58,3 +58,17 @@ test("官网安装页展示提示词，唯一的安装指南来自仓库根目�
     assert.ok(page.replaceAll("&quot;", '"').includes(prompt), locale + " prompt missing or changed");
   }
 });
+
+
+test("中英首页与安装页保留四技能、部署边界和待验收状态", () => {
+  for (const name of ["index.html", "en/index.html", "install/index.html", "en/install/index.html"]) {
+    const page = html(name);
+    for (const skill of ["steward-spec", "steward-setup", "steward-doctor", "steward-deploy"])
+      assert.ok(page.includes(skill), `${name}: ${skill}`);
+    assert.match(page, /待验收|remain unverified/);
+    assert.match(page, /不构建源码|does not build source/);
+    assert.doesNotMatch(page, /尚无业务部署 Skill|业务部署技能尚未交付|deployment Skills are not delivered/);
+  }
+  assert.match(html("index.html"), /data \+ bind mount/);
+  assert.match(html("en/index.html"), /bind mounts/);
+});

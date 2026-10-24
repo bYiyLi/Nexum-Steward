@@ -44,7 +44,7 @@ export const copy = {
     capabilityNote: "以下是设计中的产品能力，尚未完成真实服务器的端到端验收。",
     capabilities: [
       { key: "OBSERVE", title: "服务器巡检", body: "从真实主机观察 CPU、内存、磁盘和系统服务状态，避免凭经验猜测。" },
-      { key: "DEPLOY", title: "Compose 部署", body: "理解当前栈，预检配置、端口、镜像与数据卷，再执行授权内的变更。" },
+      { key: "DEPLOY", title: "Compose 部署", body: "先只读规划并确认目标，复核有效配置、镜像与数据，再变更并分层验收。" },
       { key: "DIAGNOSE", title: "日志与诊断", body: "读取容器状态和日志，以可复核的证据说明故障，而不是盲目重启。" },
       { key: "MAINTAIN", title: "服务维护", body: "让更新与回退建立在真实部署版本、健康检查和数据恢复前提之上。" }
     ],
@@ -66,7 +66,7 @@ export const copy = {
     ],
     statusKicker: "OPEN DEVELOPMENT",
     statusTitle: "公开构建，持续验证。",
-    statusText: "当前源码包含 steward-spec 共用规范、steward-setup 服务器初始化与 steward-doctor 环境诊断 Skill，以及 AI 安装指南和可复制提示词。doctor 只诊断、不自动修复；ChatGPT 安装与技能发现、独立模型行为及真实 Linux 初始化/诊断仍待验收，业务部署技能尚未交付。",
+    statusText: "当前源码包含 steward-spec 共用规范、steward-setup 初始化、steward-doctor 只读诊断与 steward-deploy 部署升级 Skill。deploy 先规划确认再变更，首版不构建源码；持久数据优先服务下 data + bind mount，保护已有卷。ChatGPT 安装与技能发现、独立模型行为及真实 Linux 执行仍待验收。",
     currentPhase: "CURRENT STATUS / DESIGN PREVIEW",
     sourceLink: "浏览项目源码",
     issueLink: "提交反馈",
@@ -117,7 +117,7 @@ export const copy = {
     capabilityNote: "These are planned capabilities, not yet validated end to end on a live server.",
     capabilities: [
       { key: "OBSERVE", title: "Server inspection", body: "Inspect CPU, memory, storage and services from real host state, not assumptions." },
-      { key: "DEPLOY", title: "Compose deployment", body: "Review stacks, configuration, ports, images and volumes before authorized changes." },
+      { key: "DEPLOY", title: "Compose deployment", body: "Plan read-only, confirm the target, recheck effective inputs, images and data, then change and verify each layer." },
       { key: "DIAGNOSE", title: "Logs and diagnosis", body: "Use container state and logs to explain failures with verifiable evidence." },
       { key: "MAINTAIN", title: "Service maintenance", body: "Ground updates and recovery in actual versions, health checks and data restoration prerequisites." }
     ],
@@ -139,7 +139,7 @@ export const copy = {
     ],
     statusKicker: "OPEN DEVELOPMENT",
     statusTitle: "Built in the open. Verified in stages.",
-    statusText: "Current source includes steward-spec shared rules, steward-setup server initialization, steward-doctor environment diagnosis, an AI installation guide and a copyable prompt. Doctor reports findings without automatic repair. ChatGPT installation and Skill discovery, independent model behavior and real Linux setup/diagnosis remain unverified; application deployment Skills are not delivered.",
+    statusText: "Current source includes steward-spec shared rules, steward-setup initialization, steward-doctor read-only diagnosis and steward-deploy deployment and upgrades. Deploy requires a confirmed plan and does not build source. Prefer service data directories with bind mounts, preserving existing volumes. ChatGPT installation and Skill discovery, independent model behavior and real Linux execution remain unverified.",
     currentPhase: "CURRENT STATUS / DESIGN PREVIEW",
     sourceLink: "View source",
     issueLink: "Share feedback",
