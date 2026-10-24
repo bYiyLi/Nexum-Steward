@@ -5,7 +5,7 @@
 - 官方网页：[安装引导](https://nexum-steward.sites.y2l.top/install/)
 - 插件模板：[templates/](https://github.com/bYiyLi/Nexum-Steward/tree/main/templates)
 
-**能力范围**：官方插件包根目录 `templates/` 包含最简 `plugin.json`、`skills/steward-spec/` 共用规范和 `skills/steward-setup/` 服务器初始化 Skill（含四份环境模板）。不包含内置 MCP 连接、业务部署 Skill 或 Hooks。版本通过 Git Tag 区分，不使用版本目录。创建、安装、OAuth 授权和工具调用需要分别验证。
+**能力范围**：当前源码的插件包根目录 `templates/` 包含最简 `plugin.json`、`skills/steward-spec/` 共用规范、`skills/steward-setup/` 服务器初始化 Skill（含四份环境模板）和 `skills/steward-doctor/` 环境诊断 Skill（只读报告，不自动修复）。源码存在不等于三技能均已发布到某个 Git Tag 或已完成 ChatGPT / Linux 验收。不包含内置 MCP 连接、业务部署 Skill 或 Hooks。版本通过 Git Tag 区分，不使用版本目录。创建、安装、OAuth 授权和工具调用需要分别验证。
 
 ## 规则
 
@@ -21,7 +21,7 @@
 1. 确认指定的 ChatGPT 账户/Workspace、Nexum MCP 应用和预期管理的 Agent 名称。应用显示名称不等于技术 ID。
 2. **已有 Nexum 应用**：从当前已连接应用执行只读 `project.list`，核对 OAuth Grant 可见的 Agent 名称及状态，不扫描其他账户或超范围 Agent。同名、离线、不可见或授权集合为空时报告，不随意选择其他机器。
 3. **尚无 Nexum 应用**：指导用户在 ChatGPT **Plugins → 添加自定义 MCP Server** 注册 `https://nexum.y2l.top/mcp`，通过 Nexum OAuth 授权选择 Agent，再只读验证 `project.list`。如具体 UI 不同，先查实际页面；不索取聊天中的密码、Token 或 OAuth 凭证。
-4. 获取选定 Git Tag 对应的官方 `templates/` 插件包，核对 `plugin.json`、`skills/steward-spec/SKILL.md`、`skills/steward-setup/SKILL.md` 和四份 `assets/AGENTS.<env>.md` 模板是否完整。文件缺失或校验失败时停止，不使用其他来源的文件替代。
+4. 获取选定 Git Tag 对应的官方 `templates/` 插件包，核对 `plugin.json`、`skills/steward-spec/SKILL.md`、`skills/steward-setup/SKILL.md`、`skills/steward-doctor/SKILL.md` 和 setup 的四份 `assets/AGENTS.<env>.md` 模板是否完整。先确认所选 Tag 实际包含三技能；旧 Tag 缺少 doctor 时报告版本不满足，不宣称已安装 doctor，不自行混入其他分支文件。文件缺失或校验失败时停止，不使用其他来源的文件替代。
 
 **继续条件**：已核实目标账户、连接的实际状态、授权可见的机器和官方模板；待登录时保留阻碍。
 
@@ -31,14 +31,14 @@
 
 方案应列明：目标账户/Workspace、实际已注册 Nexum 应用、允许访问的 Agent（基于实时 `project.list`）、选定 Git Tag、私人 Plugin 名称、修改字段、定制迁移与冲突、创建步骤、安装检查和旧 Plugin 的保留方式。确认用户方案后再执行，普通已授权步骤不重复问。
 
-注意：改变 Manifest 的描述、显示名称或推荐提问，并不会实现“自动备份”“高风险审批”等安全控制。目前只有共用规范和服务器初始化 Skill；真实服务器初始化、业务部署及其他运维流程仍需分别授权和验证。
+注意：改变 Manifest 的描述、显示名称或推荐提问，并不会实现“自动备份”“高风险审批”等安全控制。当前源码提供共用规范、服务器初始化与环境诊断 Skill；doctor 不自动修复。真实服务器初始化、诊断、业务部署及其他运维流程仍需分别授权和验证。
 
 ## 三、从官方模板生成私人插件
 
 **默认路径：复用现有 ChatGPT Nexum MCP 应用**，不注册第二条连接。
 
 1. 从已连接 Nexum 应用的实际页面/元数据读取技术 ID（通常形如 `plugin_asdk_app_…`）；它不是 OAuth client ID，也不是本次创建的私人 Plugin ID。
-2. 从官方 `templates/` 复制 `plugin.json` 及完整 `skills/`（包括 `steward-setup/assets/`），按获确认的方案设置插件名称、描述和展示信息。需要复用已有应用时，根据宿主实际支持的格式绑定应用。
+2. 从官方 `templates/` 复制 `plugin.json` 及完整 `skills/`（包括 spec、setup、doctor 和 `steward-setup/assets/`），按获确认的方案设置插件名称、描述和展示信息。需要复用已有应用时，根据宿主实际支持的格式绑定应用。
 3. 新建包根目录 `.app.json`，使用真实技术 ID：
 
    `{"apps":{"nexum":{"id":"plugin_asdk_app_以当前账户实际值替换"}}}`
@@ -53,9 +53,9 @@
 ## 四、新插件只读自检与交付
 
 1. 在目标账户的新会话中启用/选择新 Plugin（必要时通过 `@` 选择），核对可见名称、版本、实际私人 Plugin ID 与所引用的 Nexum 应用。
-2. 检查 `steward-spec` 与 `steward-setup` 是否在新 Plugin 中实际可发现、所需模板是否完整；可发现不代表自动执行或已在服务器初始化。
+2. 检查 `steward-spec`、`steward-setup` 与 `steward-doctor` 是否在新 Plugin 中实际可发现、所需模板及共用规范引用是否完整可读；可发现不代表已执行服务器初始化或诊断。
 3. 使用新 Plugin 执行**只读** `project.list`，核对授权范围内的 Agent 名称和在线状态；没有足够权限时报告真实错误，不猜测 ID，不尝试查询未授权机器。
-4. 安装验收阶段**不运行** `process.exec`、`steward-setup` 初始化、Docker Compose 变更、服务重启或文件写入。不能用一个可见工具列表冒充运维流程全部完成。
+4. 安装验收阶段**不运行** `process.exec`、`steward-setup` 初始化、`steward-doctor` 服务器诊断、Docker Compose 变更、服务重启或文件写入。不能用一个可见工具列表冒充运维流程全部完成。
 5. 按真实结果分别报告：官方模板 Git Tag、私人 Plugin 创建、安装/启用、Skill 发现、OAuth、MCP 只读返回、用户定制迁移、旧插件/共享连接保留状态。未知或不可观测项单独标记并给出恢复入口。
 6. 旧 Plugin 未被新版本成功验收前保留；即使新版本可用，也不自行卸载旧 Plugin 或删除可能供其他工具使用的 Nexum MCP 应用和 Grant。
 

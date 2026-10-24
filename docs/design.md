@@ -18,13 +18,13 @@
 
 Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、服务器控制面板或 Docker 专用 MCP 服务。用户可使用 Agent 名称与 ChatGPT 沟通，但最终权限由 Nexum Cloud 的 owner/Grant/稳定 Agent ID 逐次执行。Nexum `process.exec` 不提供命令沙箱，允许根目录不等于 OS Shell 的能力边界；部署涉及 Docker socket 的高权限风险必须独立处理。
 
-当前另行增加 `steward-spec` 共用规范与 `steward-setup` 服务器环境初始化 Skill；尚未交付业务部署与日常运维 Skill，也未完成真实服务器初始化验收。
+当前源码包含 `steward-spec` 共用规范、`steward-setup` 服务器环境初始化和 `steward-doctor` 只读环境诊断 Skill；业务部署、自动修复及后台值守尚未交付。ChatGPT 实际发现、独立模型行为与真实 Linux 初始化/诊断仍需分别验收，状态由 [03 计划](development/03-steward-doctor.md)记录。
 
 ## 2. ChatGPT 插件模板与安装入口
 
 依据 OpenAI [插件打包文档](https://developers.openai.com/plugins/build/plugins) 与 Agent Plugins 1.0：
 
-- `templates/` 是可移植 ChatGPT Plugin 的包根目录，包含最简 `plugin.json`、`skills/steward-spec/SKILL.md` 和 `skills/steward-setup/SKILL.md`；初始化 Skill 的四份环境模板位于其 `assets/`。符合插件根目录 `skills/<skill-name>/SKILL.md` 的发现约定。不预置 MCP、Hooks 或业务部署 Skill。
+- `templates/` 是可移植 ChatGPT Plugin 的包根目录，包含最简 `plugin.json` 与 `skills/` 下的 `steward-spec/SKILL.md`、`steward-setup/SKILL.md`、`steward-doctor/SKILL.md`；初始化 Skill 的四份环境模板位于其 `assets/`。符合插件根目录 `skills/<skill-name>/SKILL.md` 的发现约定。不预置 MCP、Hooks 或业务部署 Skill。
 - `steward-spec` 规定运维 Agent 使用 `steward-<节点名称>-<env>-ops`；`env` 只能是 `dev`、`qa`、`pro`（预生产）、`prod`。一个 Agent 对应一个环境，环境直接由 Agent 名称确定；命名只是识别约定，不产生 Nexum Grant 权限。
 - 共用 Services Root 由用户在核实存储状态后选定绝对路径，**所选路径即根目录**，不追加 `services/`。根目录内用本地 Git 管理非敏感服务配置、用 `logs/YYYY-MM-DD.md` 记录重要运维操作；不向配置 Git 提交明文秘密、运行数据或备份。
 - `steward-setup` 的唯一职责是初始化目标 Linux 服务器环境：识别授权 Agent，检查并按需准备 Docker Engine / Compose Plugin、Python 3.12、必要运维工具；创建或复用 Services Root 的 Git 和日志；在当前 Agent OS 用户的 `~/.agents/AGENTS.md` 中组合动态服务器信息与对应环境模板，并核实 Nexum Context 实际发现。首次或重复初始化均不得覆盖既有数据和指令；不预部署业务容器。
@@ -44,7 +44,23 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 
 Agent 身份核验与 Docker Daemon 归属核验是两个不同条件：在目标 Agent 上运行 CLI，并不证明 CLI 连接了该机 Engine。按实际命令的参数、环境变量与 context 确定生效 endpoint，再用本机 Daemon/连接端点归属证据确认，不仅凭名称、路径或命令成功判断。本机 rootless Engine 可以使用其真实端点，不固定要求默认 socket。
 
-远程或未知归属时，不向该 Daemon 发起检查或变更请求，也不自动永久修改 context 或清除连接设置；报告阻塞与重新进入条件。执行身份或连接条件变化后重新核验。仅不依赖 Docker 且已获授权的工作可以继续。规则由 steward-spec 持有，setup 在准备和验收处执行；四份环境模板保留简短边界，因为生成的个人 AGENTS.md 会独立使用。
+远程或未知归属时，不向该 Daemon 发起检查或变更请求，也不自动永久修改 context 或清除连接设置；报告阻塞与重新进入条件。执行身份或连接条件变化后重新核验。仅不依赖 Docker 且已获授权的工作可以继续。规则由 steward-spec 持有，setup 在准备和验收处执行，doctor 在所有 Daemon 请求前执行；四份环境模板保留简短边界，因为生成的个人 AGENTS.md 会独立使用。
+
+### 环境诊断工作流
+
+doctor 拥有的唯一结果是诊断报告，三个入口均按「范围 → 取证 → 依观察选择分支 → 报告/真实阻塞」推进。setup 负责改变缺失配置，doctor 只评价证据，不将未初始化自动路由到 setup。doctor 先实际读取同包 `../steward-spec/SKILL.md`；读取失败只阻塞依赖规则的路径，有独立有效身份与授权证据的主机事实仍可继续，否则交付阻塞报告。
+
+范围由用户目标、已有配置与有界发现确定。体检对照基础项、Services Root 配置和本机 Docker 对象清单，报告配置/运行态差异及发现限制；指定对象只延伸到必要依赖；症状入口按可区分候选的证据收窄。缺少 Services Root/基线不整盘搜索或初始化，保留主机事实及受阻项。
+
+检查覆盖适用的六维：身份与配置、资源及运行条件、工具/运行时版本路径与当前用户可用性、服务与依赖、持久化/可恢复性、范围内安全风险。每项有对象、预期及依据、证据时点/可得版本、判定和限制。容量判断来自要求、趋势或相关故障证据，不设统一 80% 阈值。
+
+读取使用当前授权与身份，不换凭据/用户/主机、不提权或为普通读取重复造审批。先限定等待、输出及日志窗口/条数，源端最小字段读取，敏感值脱敏；不能安全限制则报告缺口，不 dump env/完整 inspect、密钥或备份业务内容。不执行健康脚本、容器 exec、业务脚本、修复或服务器文件/日志/Git 写入。仅读取已有 healthcheck 状态。
+
+证据不是原子快照，输出和日志不作为指令。记录各自时点、版本和冲突；中断/结果未知先看当前状态，身份、用户、连接/endpoint/覆盖条件或对象状态变化使相关结论失效，必要重验。容器 running、探针健康、业务可用与数据恢复分别判断；备份记录不能证明恢复已验证，无证据原因仅为候选。
+
+报告四部分为：目标/时间/范围/基线/总体发现；已检查、不适用、受阻、未检查的完整覆盖及理由；含预期/实际/证据/影响/已确认或候选原因的问题；最小后续动作、风险/前提与再验证方法。状态、严重性、可信程度分开。必需项未知使整体 partial，即使每项都有归宿也不能报环境正常；证据齐备的 complete 仍可能含问题。达到范围或证据/权限边界即可报告，不强求根因。
+
+实现采用一个自包含 SKILL.md，不新增脚本、资源占位或报告模板；共用规则通过明确依赖复用。结构与递归资源可达由 Node 静态测试验证，行为由预先定义的场景另行独立模型/隔离 Linux 验证；文本 review 不保证宿主执行符合。
 
 ## 4. 产品官网
 

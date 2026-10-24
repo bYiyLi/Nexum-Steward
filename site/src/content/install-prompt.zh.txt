@@ -10,4 +10,4 @@ https://nexum-steward.sites.y2l.top/INSTALL.md
 
 复用已经安装的 Nexum、已有 Agent 和 ChatGPT MCP 应用，不重新部署、初始化或升级任何服务器与服务。先检查真实连接、OAuth Grant 可见的 Agent、官方模板和已有 Plugin 定制，提出具体安装方案，经我确认后创建属于我账户的私人 Plugin。已有应用优先绑定原连接，不重复注册 MCP；未连接则指导我完成官方 ChatGPT MCP 连接与 OAuth 授权。
 
-当前官方模板为空，不含 Skill，不虚构 compose.* 专用 MCP Tool，不将 Agent 名称或提示词当作安全授权。创建、安装和可调用性分别核验。新版本验收前保留旧 Plugin 和共享连接，清理由我明确决定。无需我在聊天中提供凭证；已授权的普通步骤不要重复确认。
+当前源码包含 steward-spec、steward-setup 和 steward-doctor；先核实选定 Git Tag 的实际完整包，源码存在不等于已发布或验收。doctor 只诊断、不自动修复；安装自检仅检查技能发现与只读 project.list，不运行服务器命令或诊断。不虚构 compose.* 专用 MCP Tool，不将 Agent 名称或提示词当作安全授权。创建、安装和可调用性分别核验。新版本验收前保留旧 Plugin 和共享连接，清理由我明确决定。无需我在聊天中提供凭证；已授权的普通步骤不要重复确认。

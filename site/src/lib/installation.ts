@@ -13,7 +13,7 @@ const labels = {
     phase: "OFFICIAL PRIVATE PLUGIN SETUP",
     heading: "创建属于你的 ChatGPT 运维插件。",
     introduction: "先确认 Nexum Agent 和 OAuth 授权范围，再将提示词发送给 ChatGPT。安装 Agent 会核对实际连接、官方模板与已有定制，协助你创建私人插件。",
-    note: "模板包含共用规范及服务器环境初始化 Skill，尚无业务服务部署 Skill 或内置 MCP 连接。网站不会接收凭证，也不会执行服务器命令。",
+    note: "当前源码包含 steward-spec 共用规范、steward-setup 服务器初始化及 steward-doctor 只读诊断 Skill；ChatGPT 发现与真实 Linux 执行仍待验收。尚无业务部署 Skill 或内置 MCP 连接。网站不会接收凭证，也不会执行服务器命令。",
     stepsTitle: "安装流程",
     steps: [
       ["01", "准备 Nexum", "已在需要管理的服务器上安装 Nexum Agent。"],
@@ -39,7 +39,7 @@ const labels = {
     phase: "OFFICIAL PRIVATE PLUGIN SETUP",
     heading: "Create your private ChatGPT operations Plugin.",
     introduction: "Verify your existing Nexum Agents and OAuth permissions, then send the prompt to ChatGPT. The installation Agent will inspect the current connection, official template, and existing customizations.",
-    note: "The template includes a shared spec and server setup Skill, but no application deployment Skill or bundled MCP connection. The website does not collect credentials or run server commands.",
+    note: "Current source includes steward-spec shared rules, steward-setup server initialization and steward-doctor read-only diagnosis. ChatGPT discovery and real Linux execution remain unverified. There is no application deployment Skill or bundled MCP connection. The website does not collect credentials or run server commands.",
     stepsTitle: "Installation workflow",
     steps: [
       ["01", "Prepare Nexum", "Install Nexum Agents on the servers you want to manage."],

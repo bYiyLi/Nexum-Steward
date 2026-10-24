@@ -1,11 +1,39 @@
 import assert from "node:assert/strict";
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { resolve, dirname } from "node:path";
+import { resolve, dirname, relative, sep, extname } from "node:path";
+import { tmpdir } from "node:os";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const read = path => readFileSync(resolve(root, path), "utf8");
+
+// 检查本包 Markdown 链接构成的资源图；不证明模型实际加载或遵守资源。
+function reachableResources(packageRoot, entry) {
+  const visited = new Set();
+  function visit(path) {
+    const local = relative(packageRoot, path);
+    assert.ok(local && local !== ".." && !local.startsWith(`..${sep}`) && !local.startsWith(sep),
+      `resource outside package: ${path}`);
+    let cursor = packageRoot;
+    for (const part of local.split(sep)) {
+      assert.ok(readdirSync(cursor).includes(part), `missing or case-mismatched resource: ${local}`);
+      cursor = resolve(cursor, part);
+    }
+    assert.ok(statSync(path).isFile(), `resource is not a file: ${local}`);
+    if (visited.has(path)) return;
+    visited.add(path);
+    if (extname(path).toLowerCase() !== ".md") return;
+    const body = readFileSync(path, "utf8");
+    for (const [, target] of body.matchAll(/\]\(([^\s)]+)(?:\s+"[^"]*")?\)/g)) {
+      if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(target)) continue;
+      const resource = decodeURIComponent(target.split(/[?#]/, 1)[0]);
+      if (resource) visit(resolve(dirname(path), resource));
+    }
+  }
+  visit(resolve(packageRoot, entry));
+  return visited;
+}
 
 test("ChatGPT 插件以 templates 为包根目录，不包含 Codex 兼容包", () => {
   const manifest = JSON.parse(read("templates/plugin.json"));
@@ -21,13 +49,14 @@ test("ChatGPT 插件以 templates 为包根目录，不包含 Codex 兼容包", 
   assert.ok(!existsSync(resolve(root, "skills/nexum-steward/SKILL.md")));
 });
 
-test("空模板不预设 MCP 连接", () => {
+test("插件模板不预设 MCP 连接", () => {
   assert.ok(!existsSync(resolve(root, "templates/mcp.json")));
 });
 
-test("共用规范与初始化 Skill 均位于 ChatGPT 插件包的 skills/ 下", () => {
-  assert.deepEqual(readdirSync(resolve(root, "templates/skills")).sort(), ["steward-setup", "steward-spec"]);
+test("共用规范、初始化与诊断 Skill 均位于 ChatGPT 插件包的 skills/ 下", () => {
+  assert.deepEqual(readdirSync(resolve(root, "templates/skills")).sort(), ["steward-doctor", "steward-setup", "steward-spec"]);
   assert.deepEqual(readdirSync(resolve(root, "templates/skills/steward-spec")), ["SKILL.md"]);
+  assert.deepEqual(readdirSync(resolve(root, "templates/skills/steward-doctor")), ["SKILL.md"]);
   const skill = read("templates/skills/steward-spec/SKILL.md");
   assert.match(skill, /^---\nname: steward-spec\ndescription: .+\n---\n/);
   assert.match(skill, /steward-<节点名称>-<env>-ops/);
@@ -74,12 +103,29 @@ test("可移植 Skill 的标识和引用资源均可定位", () => {
   for (const name of readdirSync(resolve(root, skillsRoot))) {
     const body = read(`${skillsRoot}/${name}/SKILL.md`);
     assert.match(body, new RegExp(`^---\\nname: ${name}\\n`));
+    assert.match(body, /^---\nname: [^\n]+\ndescription: [^\n]+\n---\n/);
     assert.ok(`${manifest.name}:${name}`.length <= 64, `skill identity too long: ${name}`);
+    reachableResources(resolve(root, "templates"), `skills/${name}/SKILL.md`);
   }
-  const setup = read(`${skillsRoot}/steward-setup/SKILL.md`);
-  const setupRoot = resolve(root, skillsRoot, "steward-setup");
-  for (const [, link] of setup.matchAll(/\]\(([^)]+\.md)\)/g)) {
-    assert.ok(existsSync(resolve(setupRoot, link)), `missing linked resource: ${link}`);
+  const doctorResources = reachableResources(resolve(root, "templates"), "skills/steward-doctor/SKILL.md");
+  assert.ok(doctorResources.has(resolve(root, skillsRoot, "steward-spec/SKILL.md")));
+});
+
+test("资源图校验递归引用，并拒绝缺失、大小写不符及包外路径", () => {
+  const fixture = mkdtempSync(resolve(tmpdir(), "steward-resources-"));
+  try {
+    mkdirSync(resolve(fixture, "references"));
+    writeFileSync(resolve(fixture, "SKILL.md"), "[branch](references/branch.md#details)\n[external](https://example.invalid/a.md)\n[anchor](#local)");
+    writeFileSync(resolve(fixture, "references/branch.md"), "[leaf](leaf.md)\n[cycle](../SKILL.md)");
+    writeFileSync(resolve(fixture, "references/leaf.md"), "Leaf");
+    assert.equal(reachableResources(fixture, "SKILL.md").size, 3);
+    for (const target of ["missing.md", "Leaf.md", "../../outside.md"]) {
+      writeFileSync(resolve(fixture, "references/branch.md"), `[broken](${target})`);
+      assert.throws(() => reachableResources(fixture, "SKILL.md"),
+        /missing or case-mismatched resource|resource outside package/);
+    }
+  } finally {
+    rmSync(fixture, { recursive: true, force: true });
   }
 });
 
@@ -112,10 +158,11 @@ test("四份环境 AGENTS 模板只包含相应的运维规范片段", () => {
   assert.equal(new Set(texts).size, 4);
 });
 
-test("产品文档区分规范 Skill 与尚未交付的运维 Skill", () => {
+test("产品文档与诊断场景可定位", () => {
   for (const path of [
     "README.md", "AGENTS.md", "docs/requirements.md",
-    "docs/design.md", "docs/development/02-chatgpt-plugin-and-website.md"
+    "docs/design.md", "docs/development/02-chatgpt-plugin-and-website.md",
+    "docs/development/03-steward-doctor.md", "tests/steward-doctor-scenarios.md"
   ]) assert.ok(read(path).length > 200, path);
   assert.match(read("docs/requirements.md"), /steward-spec/);
   assert.match(read("docs/design.md"), /steward-spec/);
@@ -145,6 +192,7 @@ test("根目录安装指南与网站提示词独立维护，不使用版本目�
   assert.match(manual, /templates\//);
   assert.match(manual, /skills\/steward-spec\/SKILL\.md/);
   assert.match(manual, /skills\/steward-setup\/SKILL\.md/);
+  assert.match(manual, /skills\/steward-doctor\/SKILL\.md/);
   assert.match(manual, /Git Tag/);
   assert.match(manual, /\.app\.json/);
   assert.match(manual, /project\.list/);

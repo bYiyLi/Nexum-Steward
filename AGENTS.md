@@ -4,7 +4,8 @@
 
 - 产品与验收：`docs/requirements.md`
 - 架构及网站设计：`docs/design.md`
-- 当前开发交付与状态：`docs/development/02-chatgpt-plugin-and-website.md`
+- 当前开发交付与状态：`docs/development/03-steward-doctor.md`
+- 插件与网站历史交付：`docs/development/02-chatgpt-plugin-and-website.md`
 - 初始化历史记录：`docs/development/01-initialization.md`
 - ChatGPT 开发 Project Instructions 源：`docs/chatgpt-project.md`
 
@@ -13,7 +14,7 @@
 ## 边界
 
 - 工作语言：简体中文；协议、工具名、API 标识保持原文。
-- **ChatGPT 插件，不是 Codex 专用插件**：插件包根目录为 `templates/`，包含最简 `plugin.json`、共用规范 `skills/steward-spec/SKILL.md` 和服务器初始化 `skills/steward-setup/SKILL.md`（四份环境 AGENTS 模板在其 `assets/` 下）。不预置 MCP 或其他业务部署 Skill；版本由 Git Tag 区分。AI 安装指南在根目录 `INSTALL.md`，安装提示词在 `site/src/content/`。不创建 `install/` 或版本目录，也不自建额外 MCP Server。
+- **ChatGPT 插件，不是 Codex 专用插件**：插件包根目录为 `templates/`，包含最简 `plugin.json`、共用规范 `skills/steward-spec/SKILL.md`、服务器初始化 `skills/steward-setup/SKILL.md`（四份环境 AGENTS 模板在其 `assets/` 下）和只读环境诊断 `skills/steward-doctor/SKILL.md`。doctor 不自动修复或要求先 setup。不预置 MCP 或业务部署 Skill；版本由 Git Tag 区分。AI 安装指南在根目录 `INSTALL.md`，安装提示词在 `site/src/content/`。不创建 `install/` 或版本目录，也不自建额外 MCP Server。
 - Nexum Cloud、OAuth Grant、Nexum Agent 和 Project / Files / Process 是外部既有能力，本仓库不开发独立 PaaS、Docker 专用 MCP Server、运维 Web 控制台。
 - Agent 名称用于识别，真正授权由 Nexum OAuth Grant + 稳定 Agent ID 执行；`process.exec` 以目标 OS 用户权限执行，没有命令沙箱。不能用插件文字替代后端授权、Docker 权限与持久化数据保护。
 - `site/` 是**纯静态产品介绍站**，不是 Nexum Cloud 或远程执行服务。文案必须区分已验证能力与产品方向，不能对尚未发布的运维插件使用“立即安装”“正在自动运行”等误导措辞。

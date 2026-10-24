@@ -1,5 +1,7 @@
 # 02 — ChatGPT 插件基础与 GitHub Pages 官网
 
+后续环境诊断增量与当前状态见 [03 — steward-doctor](03-steward-doctor.md)。本文件保留此前阶段的范围和结果。
+
 ## 目标
 
 在已初始化的 Nexum Steward 仓库中，纠正错误的 Codex 专属脚手架，并交付面向 ChatGPT 的 **MCP-only 可移植插件基础**及**公开静态产品官网**。产品 Skill 延后，不能用尚不存在的 Skill 填充本阶段验收。
