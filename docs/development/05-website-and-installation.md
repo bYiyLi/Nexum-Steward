@@ -39,7 +39,16 @@
 - Node 24.15.0 / pnpm 10.34.5 冻结安装通过；plugin 18 项 + site 6 项合计 24 项测试通过；Astro check 0 errors / 0 warnings，静态 build 通过。复制测试执行实际处理函数，覆盖成功、拒绝和无 Clipboard，验证参数等于全部可见提示词。
 - Chrome 实际检查中英首页与安装页，在请求视口 1440×1000 和 390×844（页面 clientWidth 1425 / 375，含滚动条差异）下，深浅两主题共 16 组合均无横向溢出。实际查看居中首屏、四阶段示意和安装文本布局；桌面完整导航、手机键盘展开菜单和锚点导航可用。
 - 中文复制成功反馈、通过临时替换 Clipboard.writeText 模拟拒绝后的自动全文选择/失败反馈，中英手动选择的 Enter 键操作均实际验证。故障注入已 reload 移除。原生剪贴板独立读回受浏览器接口限制；复制参数一致另由行为测试确认，不宣称跨应用粘贴实测。
-- 视觉 self-review：中性底与单一蓝色、主次 CTA 比例、统一宽度和场景信息层级符合本轮截图方向；深色文字与边框单独查看。无动效，reduced-motion CSS 保留，源代码焦点可见，手选焦点已实际截图。
-- Library 实际截图：桌面首页浅色 `libfile_200c8f1cec648191b27194681222e37c`；桌面安装浅色 `libfile_c43b06a5ecf0819180ca6de0b4befdba`；手机英文首页深色 `libfile_9d42dd1026e881919c66cad8ce7018bb`；手机英文安装深色 `libfile_8c6c80f4837c819196e60b03d2e8fea3`。均来自本 worktree 的 `http://127.0.0.1:4327/` 或对应 `/install/`、`/en/`、`/en/install/`，代表同一待提交源码。
+- 视觉 self-review：中性底与单一蓝色、主次 CTA 比例、统一宽度和场景信息层级符合本轮截图方向；深色文字与边框单独查看。无动效，reduced-motion 在 Chrome 模拟下实测 scroll-behavior 为 auto，随后清除模拟；源代码焦点可见，手选焦点已实际截图。
+- Library 实际截图：桌面首页浅色 `libfile_200c8f1cec648191b27194681222e37c`；桌面安装浅色 `libfile_c43b06a5ecf0819180ca6de0b4befdba`；手机英文首页深色 `libfile_9d42dd1026e881919c66cad8ce7018bb`；手机英文安装深色 `libfile_8c6c80f4837c819196e60b03d2e8fea3`。均来自本 worktree 的 `http://127.0.0.1:4327/` 或对应 `/install/`、`/en/`、`/en/install/`，对应实现提交 `445da09c909addf23c055a7b021fe43019a0b889` 的页面源码。截图实际像素分别为 1425×2927、1390×1150、375×4244、375×1570（全页截图）。
 - 公开范围与全量 diff review 已检查，未改 templates、04 或其他历史记录；未加入凭证、个人账户链接、依赖或构建产物。提交和远端部署状态以最终报告的真实 SHA/CI/线上结果为准。
 - 实际 ChatGPT 安装、模型行为与 Linux 运行验收不在本轮执行范围，保持 pending。
+
+## 交付结果（2026-10-24 UTC）
+
+- 实现提交 `445da09c909addf23c055a7b021fe43019a0b889` 已快进推送远端 main，`git ls-remote` 与本地 SHA 一致，工作树干净。现有 worktree 均保留，主工作树未用于实现。
+- [Actions 40068954089](https://github.com/bYiyLi/Nexum-Steward/actions/runs/40068954089) 对该 SHA 的构建检查与 Publish GitHub Pages 均 success。
+- Pages API 实际返回精确 cname `nexum-steward.sites.y2l.top`、workflow 部署、https_enforced=true。
+- 线上 `/`、`/install/`、`/en/`、`/en/install/` 均 HTTPS 200 且含新版内容，四页已在 Chrome 实际打开核实。线上 `/INSTALL.md` 与本地完全相同，SHA-256 为 `1800a213dc548a13b24c12135fd959e66e1bcc9d9533a5c8e82d7fbf0a79024f`。
+- DNS CNAME 实查为 `byiyli.github.io.`；本机及指定公共 DNS 的 A 查询均返回保留地址，可能受网络代理影响；公开 DNS HTTPS 查询又遭 TLS 连接中断，公网 A 未独立核实。HTTPS 实际可达结果已单独记录。
+- 本节为实施后的证据补记，只修改开发记录，不改变已部署网站产物。实际插件安装、独立模型、Linux 运维验收与原 runtime pending 均保持不变。
