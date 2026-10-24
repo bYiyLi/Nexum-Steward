@@ -43,7 +43,7 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 3. ChatGPT 根据实时 `project.list` 返回的名称唯一定位 Agent，操作权限由服务端 Grant + 稳定 Agent ID 校验。
 4. ChatGPT 复用现有 `project.open`、`files.*`、`process.*` 工具检查环境并操作 Docker Compose。
 5. deploy 先只读规划，明确目标、有效 Compose 输入、数据不可逆点、过程控制和验收项；用户确认具体修订后复核执行，最后按同项报告。
-6. 持久数据优先服务目录下 `data` + bind mount，既有卷或应用要求说明例外、不擅迁移。配置解析、容器运行、应用健康、用户入口和数据恢复分别核验，不能互相替代。
+6. 按用途、生命周期和影响边界划分运维单元，默认每单元直接目录及独立稳定 Compose 项目；应用可含专用数据库/缓存，共享资源明确归属和消费者。持久数据优先单元目录下 `data` + bind mount，已有外部路径/卷或软件要求说明例外、不擅迁移。规则和三个案例见 [steward-spec](templates/skills/steward-spec/SKILL.md)。配置解析、容器运行、应用健康、用户入口和数据恢复分别核验，不能互相替代。
 
 服务器配置 Git 的共同规则见 [steward-spec](templates/skills/steward-spec/SKILL.md)：用于追溯和重建材料同步，非敏感 `.env` 可提交，敏感配置优先加密。推荐独立私有仓库；明确远程、分支及管理范围后，及时定向提交并在已确认授权内推送，分别报告配置、提交、同步和业务验收。
 

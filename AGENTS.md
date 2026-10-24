@@ -4,6 +4,7 @@
 
 - 产品与验收：`docs/requirements.md`
 - 架构及网站设计：`docs/design.md`
+- 运维单元与 Compose 归属修订：`docs/development/06-operation-units.md`
 - 当前官网与安装入口交付：`docs/development/05-website-and-installation.md`
 - 运维技能交付与待验收状态：`docs/development/04-steward-deploy.md`
 - 环境诊断历史交付：`docs/development/03-steward-doctor.md`

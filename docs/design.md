@@ -26,7 +26,7 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 
 - `templates/` 是可移植 ChatGPT Plugin 的包根目录，包含最简 `plugin.json` 与 `skills/` 下的 `steward-spec/SKILL.md`、`steward-setup/SKILL.md`、`steward-doctor/SKILL.md`、`steward-deploy/SKILL.md`；deploy 的升级细节在按需读取的 `references/upgrade.md`；初始化 Skill 的四份环境模板位于其 `assets/`。符合插件根目录 `skills/<skill-name>/SKILL.md` 的发现约定。不预置 MCP 或 Hooks。
 - `steward-spec` 规定运维 Agent 使用 `steward-<节点名称>-<env>-ops`；`env` 只能是 `dev`、`qa`、`pro`（预生产）、`prod`。一个 Agent 对应一个环境，环境直接由 Agent 名称确定；命名只是识别约定，不产生 Nexum Grant 权限。
-- 共用 Services Root 由用户在核实存储状态后选定绝对路径，**所选路径即根目录**，不追加 `services/`。按 spec 确定配置 Git 工作区/范围，记录配置追溯与重建材料，脱敏运维记录位于 `logs/YYYY-MM-DD.md`；非敏感配置（含核实无秘密的 `.env`）直接提交，敏感配置优先使用已有可信加密方式，不纳入运行数据/备份。持久数据默认优先 `Services Root/<服务名>/data` + bind mount；应用要求/既有卷为说明理由的例外，不自动迁移；完整约定由 spec 持有，四份独立生成模板保留简短边界。
+- 共用 Services Root 由用户在核实存储状态后选定绝对路径，**所选路径即根目录**，不追加 `services/`。按 spec 确定配置 Git 工作区/范围，记录配置追溯与重建材料，脱敏运维记录位于 `logs/YYYY-MM-DD.md`；非敏感配置（含核实无秘密的 `.env`）直接提交，敏感配置优先使用已有可信加密方式，不纳入运行数据/备份。持久数据默认优先 `Services Root/<单元名>/data` + bind mount；已有外部路径/卷及软件要求为说明理由的例外，不自动迁移；完整约定由 spec 持有，四份独立生成模板保留简短边界。
 - `steward-setup` 的唯一职责是初始化目标 Linux 服务器环境：识别授权 Agent，检查并按需准备 Docker Engine / Compose Plugin、Python 3.12、必要运维工具；创建或复用 Services Root 的 Git 和日志；在当前 Agent OS 用户的 `~/.agents/AGENTS.md` 中组合动态服务器信息与对应环境模板，并核实 Nexum Context 实际发现。首次或重复初始化均不得覆盖既有数据和指令；不预部署业务容器。
 - 新建个人 `AGENTS.md` 只设 `## 服务器信息` 与 `## 管理运维规范` 两个二级区域。前者按当前服务器实际情况动态生成，不使用固定资产字段表；后者由 dev、qa、pro、prod 四份环境模板提供不同的运维行为规则。已有个人文件保留其他正文、章节与用户定制，仅安全合并可定位的 Steward 内容，不能为满足新建格式删除或重排原有指令。
 - `INSTALL.md` 位于仓库根目录，作为 AI Agent 的安装指南；`site/src/content/install-prompt.zh.txt` 与 `install-prompt.en.txt` 为官网展示的安装提示词。官网静态构建直接从根目录指南生成 `/INSTALL.md`，无须维护第二份副本。
@@ -45,6 +45,14 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 Agent 身份核验与 Docker Daemon 归属核验是两个不同条件：在目标 Agent 上运行 CLI，并不证明 CLI 连接了该机 Engine。按实际命令的参数、环境变量与 context 确定生效 endpoint，再用本机 Daemon/连接端点归属证据确认，不仅凭名称、路径或命令成功判断。本机 rootless Engine 可以使用其真实端点，不固定要求默认 socket。
 
 远程或未知归属时，不向该 Daemon 发起检查或变更请求，也不自动永久修改 context 或清除连接设置；报告阻塞与重新进入条件。执行身份或连接条件变化后重新核验。仅不依赖 Docker 且已获授权的工作可以继续。规则由 steward-spec 持有，setup 在准备和验收处执行，doctor 和 deploy 在所有 Daemon 请求前执行；四份环境模板保留简短边界，因为生成的个人 AGENTS.md 会独立使用。
+
+### 运维单元与 Compose 归属
+
+R-39～R-42 的规则和三个短案例由 [spec 的 Services Root 规则](../templates/skills/steward-spec/SKILL.md#运维单元目录与-compose-归属)统一持有。单元按用途、生命周期及影响边界组织，可含应用与专用组件；共享数据库独立归属。默认单元目录直接位于 Services Root，主 Compose、自有配置/秘密引用/数据同属目录，项目身份独立稳定；多文件集合、顺序与路径基准属于有效输入。独立基础服务不因共享网络集中到 edge，不预建业务栈或 config/secrets/data 空目录。已有布局/外部路径/卷和软件要求保留说明例外的通道。
+
+共享网络、入口和存储通过具体计划/说明记录创建及维护归属、消费者与影响，不引入注册中心或强制全局网络。旧集中栈评估后才决定是否迁移，具体计划获批后执行；新默认原则不是旧部署违规证据。拆分检查相对路径、项目/对象/卷身份、数据/证书和共享依赖，保护用户定制；目录调整可能改变有效输入，不能作为纯整理跳过变更判断。Docker 官方的 [多文件合并](https://docs.docker.com/compose/how-tos/multiple-compose-files/merge/)与[项目名](https://docs.docker.com/compose/how-tos/project-name/)说明支持这些核验点（2026-10-24 查阅）；这些资料说明 Compose 行为，不证明本轮已在服务器验证。
+
+deploy 在现有 A 说明分组理由，B 列单元目录/项目及路径基准，D/E 列共享依赖与影响，沿用一次具体修订确认，不追加逐目录审批。doctor 对照适用基线和例外只读诊断，不自动拆分或修复；setup 不预建业务栈、不重组既有部署。四份环境模板因输出独立使用而保留必要摘要，环境差异和既有用户定制保护继续有效。文件按内容和用途分类，配置目录不使证书/私钥、秘密、运行状态或业务数据成为可提交配置。
 
 ### 环境诊断工作流
 

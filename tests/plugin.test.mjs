@@ -291,7 +291,7 @@ test("deploy 计划与执行报告保留必需边界，删除关键字段会被�
 test("data 偏好及例外在共用真源和独立环境输出中一致", () => {
   for (const path of ["templates/skills/steward-spec/SKILL.md", ...["dev", "qa", "pro", "prod"].map(env => `templates/skills/steward-setup/assets/AGENTS.${env}.md`)]) {
     const body = read(path);
-    assert.ok(body.includes("Services Root/<服务名>/data"), path);
+    assert.ok(body.includes("Services Root/<单元名>/data"), path);
     assert.match(body, /bind mount/);
     assert.match(body, /默认优先/);
     assert.match(body, /例外/);
@@ -357,4 +357,78 @@ test("个人规范显式加载契约覆盖复用、身份变化与缺失分支",
   assert.match(read("templates/skills/steward-setup/SKILL.md"), /保留既有定制/);
   assert.match(read("templates/skills/steward-doctor/SKILL.md"), /基线受阻分支，不修复/);
   assert.match(read("templates/skills/steward-deploy/SKILL.md"), /不以模板或记忆替代/);
+});
+
+// 仅验证可分发文本合同与场景材料，不执行或预测模型决策。
+test("运维单元默认、例外与三个紧邻案例保留在共同真源", () => {
+  const spec = read("templates/skills/steward-spec/SKILL.md");
+  const rules = spec.split("### 运维单元、目录与 Compose 归属\n")[1]?.split("### 配置 Git：")[0];
+  assert.ok(rules, "unit rules must be adjacent to Services Root and Git rules");
+  for (const rule of [
+    /按用途、生命周期及变更影响边界划分，不等于单容器/,
+    /默认一个运维单元直接位于 `Services Root\/<单元名>\/`/,
+    /默认每个独立单元使用独立且稳定的 Compose 项目身份/,
+    /共享数据库应有独立归属/, /配置文件.*合并顺序.*相对路径基准/,
+    /共享网络、入口和存储.*创建\/维护归属、消费者及变更影响/,
+    /不强制一张全局网络/, /不强制预建.*空目录/,
+    /已有外部路径、已有卷或软件要求.*例外/,
+    /不得把新默认原则倒推为旧部署违规/, /不新增逐目录审批/,
+    /以下名称和路径.*不是固定模板/
+  ]) assert.match(rules, rule);
+  assert.deepEqual([...rules.matchAll(/^\d\. \*\*(.+?)\*\*/gm)].map(m => m[1]),
+    ["caddy / frpc / hello 独立运维", "myapp + 专用 postgres / redis", "已有 edge 集中栈"]);
+  for (const name of ["caddy", "frpc", "hello", "myapp", "edge"])
+    assert.ok(rules.includes(`Services Root/${name}/compose.yaml`), name);
+  assert.match(spec, /按内容与用途分类，不仅凭目录名判定/);
+  assert.match(spec, /证书及其私钥、秘密.*运行状态与业务数据/);
+});
+
+test("单元规则进入原计划字段与四份独立环境输出，不改变职责", () => {
+  const deploy = read("templates/skills/steward-deploy/SKILL.md");
+  validateDeployContract(deploy);
+  const rows = [...deploy.matchAll(/^\| ([A-J]) ([^|]+)\| (.+) \|$/gm)];
+  assert.equal(rows.length, 10, "retain exactly A-J, no per-directory plan gate");
+  const row = letter => rows.find(m => m[1] === letter)[3];
+  assert.match(row("A"), /运维单元分组理由.*专用组件与共享依赖/);
+  assert.match(row("B"), /单元当前\/目标的目录.*Compose 项目名及生效来源.*既有例外.*相对路径基准/);
+  assert.match(row("D"), /共享网络、入口、存储.*创建\/维护归属、消费者与变更影响/);
+  const bodies = ["dev", "qa", "pro", "prod"].map(env =>
+    read(`templates/skills/steward-setup/assets/AGENTS.${env}.md`));
+  for (const body of bodies) {
+    for (const rule of [/不等于单容器/, /默认直接使用 `Services Root\/<单元名>\/`/,
+      /独立稳定的 Compose 项目身份/, /相对路径基准/, /共享数据库独立归属/,
+      /创建\/维护归属、消费者和变更影响/, /不倒推旧部署违规/,
+      /已有外部路径.*例外/, /按内容与用途分类/, /用户定制/]) assert.match(body, rule);
+    assert.doesNotMatch(body, /每个服务使用独立目录|各服务使用独立的 Docker Compose 项目/);
+  }
+  assert.equal(new Set(bodies).size, 4, "preserve environment differences");
+  assert.match(read("templates/skills/steward-doctor/SKILL.md"), /不自动拆分或迁移/);
+  assert.match(read("templates/skills/steward-setup/SKILL.md"), /不预建.*Compose 栈.*空目录/);
+});
+
+test("单元场景独立冻结输入，判定逐一可定位且覆盖有区分度的事实", () => {
+  const input = JSON.parse(read("tests/fixtures/steward-units/requests.json"));
+  const oracle = read("tests/steward-unit-scenarios.md");
+  const ids = input.cases.map(c => c.id);
+  assert.equal(input.schemaVersion, 1);
+  assert.deepEqual(ids, Array.from({ length: 9 }, (_, i) => `U0${i + 1}`));
+  assert.deepEqual([...oracle.matchAll(/^\| (U\d+) \|/gm)].map(m => m[1]), ids);
+  for (const entry of input.cases) {
+    assert.ok(entry.request.length > 10 && Object.keys(entry.fixture).length > 0, entry.id);
+    for (const forbidden of ["expected", "expectedStatus", "allowed", "forbidden", "answer", "continuation"])
+      assert.equal(entry[forbidden] ?? entry.fixture[forbidden], undefined, `${entry.id}: oracle leaked`);
+  }
+  const fixture = id => input.cases.find(c => c.id === id).fixture;
+  assert.equal(fixture("U01").lifecycle, "independent");
+  assert.deepEqual(fixture("U02").postgresConsumers, ["myapp"]);
+  assert.deepEqual(fixture("U03").databaseConsumers, ["myapp", "reports"]);
+  assert.equal(fixture("U04").approvedMigration, false);
+  assert.notEqual(fixture("U05").oldBase, fixture("U05").newBase);
+  assert.ok(fixture("U05").bindSources.every(p => p.startsWith("./")));
+  assert.equal(fixture("U06").networkOwner, null);
+  assert.equal(fixture("U07").businessStackRequested, false);
+  assert.ok(fixture("U08").files["config/private.key"]);
+  assert.equal(fixture("U09").dataMoveRequested, false);
+  assert.match(oracle, /不提供给执行模型/);
+  assert.match(oracle, /当前均 not run/);
 });

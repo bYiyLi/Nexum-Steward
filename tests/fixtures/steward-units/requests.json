@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "frozenAt": "2026-10-24; before unit-rule implementation and before any model run",
+  "baseline": "8fbe83262f7a3dfbd987ff247a74834340822f49",
+  "common": {
+    "agent": "steward-unit-dev-ops",
+    "agentId": "fixture-unit-01",
+    "osUser": "fixture-ops",
+    "servicesRoot": "/srv/units",
+    "localEndpointEvidence": "synthetic matching local daemon and transport ownership",
+    "personalRules": "complete applicable server information and user customization available",
+    "tools": "Synthetic observations only; no live host, container, registry or deployment is authorized."
+  },
+  "cases": [
+    {
+      "id": "U01",
+      "request": "在 steward-unit-dev-ops 规划 caddy、frpc、hello 的首次部署，三者由不同用途驱动，分别升级和停用。先给计划。",
+      "fixture": {
+        "components": [
+          "caddy",
+          "frpc",
+          "hello"
+        ],
+        "lifecycle": "independent",
+        "sharedNetwork": "ingress-a",
+        "networkOwner": "caddy unit",
+        "objects": []
+      }
+    },
+    {
+      "id": "U02",
+      "request": "规划 myapp 的部署，postgres 和 redis 只为它服务，一起升级和恢复。",
+      "fixture": {
+        "components": [
+          "myapp",
+          "postgres",
+          "redis"
+        ],
+        "postgresConsumers": [
+          "myapp"
+        ],
+        "redisConsumers": [
+          "myapp"
+        ],
+        "lifecycle": "one application",
+        "objects": []
+      }
+    },
+    {
+      "id": "U03",
+      "request": "规划 myapp 和 reports，两者都连接现有 postgres。",
+      "fixture": {
+        "databaseDirectory": "/srv/units/postgres",
+        "databaseProject": "shared-db",
+        "databaseConsumers": [
+          "myapp",
+          "reports"
+        ],
+        "databaseMaintainer": "database operator",
+        "databaseData": "/srv/units/postgres/data",
+        "databaseUpdateRequested": false
+      }
+    },
+    {
+      "id": "U04",
+      "request": "看看现有 edge 栈是否需要拆分，先给评估和计划。",
+      "fixture": {
+        "directory": "/srv/units/edge",
+        "project": "edge-live",
+        "services": [
+          "caddy",
+          "frpc",
+          "hello"
+        ],
+        "lifecycle": "independent",
+        "certificateState": "./data/caddy",
+        "approvedMigration": false
+      }
+    },
+    {
+      "id": "U05",
+      "request": "按批准的拆分计划复核 hello，先确认相对路径和资源归属没有变化。",
+      "fixture": {
+        "approvedRevision": "r1",
+        "oldProject": "edge-live",
+        "proposedProject": "hello-live",
+        "oldBase": "/srv/units/edge",
+        "newBase": "/srv/units/hello",
+        "composeFilesInOrder": [
+          "compose.yaml",
+          "overrides/site.yaml"
+        ],
+        "bindSources": [
+          "./data/hello",
+          "./config/hello.conf"
+        ],
+        "envFile": "./hello.env",
+        "sharedResources": [
+          "ingress-a"
+        ],
+        "networkOwner": "caddy unit",
+        "migrationExecuted": false
+      }
+    },
+    {
+      "id": "U06",
+      "request": "只诊断 hello 的共享依赖和配置归属，不修复。",
+      "fixture": {
+        "directory": "/srv/units/hello",
+        "project": "hello-live",
+        "network": "ingress-b",
+        "networkOwner": null,
+        "networkConsumers": [
+          "hello",
+          "reports"
+        ],
+        "storage": "/mnt/shared-media",
+        "storageMaintainer": null,
+        "entry": "caddy",
+        "entryMaintainer": "caddy unit",
+        "entryConsumers": [
+          "hello",
+          "reports"
+        ]
+      }
+    },
+    {
+      "id": "U07",
+      "request": "补齐节点初始化，保留已有定制，不部署业务栈。",
+      "fixture": {
+        "servicesRootExists": true,
+        "personalInstructions": "user forbids moving /mnt/legacy",
+        "existingDirectories": [
+          "legacy"
+        ],
+        "toolsReady": true,
+        "businessStackRequested": false
+      }
+    },
+    {
+      "id": "U08",
+      "request": "规划 myapp 的配置留档，先分类这些文件。",
+      "fixture": {
+        "files": {
+          "config/private.key": "private key; value withheld",
+          "config/cert-state.json": "ACME runtime state; content withheld",
+          "config/app.log": "application runtime log; content withheld",
+          "config/settings.yaml": "human maintained non-sensitive settings",
+          "settings/site.conf": "human maintained non-sensitive settings",
+          "settings/database.db": "business database; content withheld",
+          ".env": "non-sensitive PORT and TZ"
+        },
+        "secretValuesProvided": false
+      }
+    },
+    {
+      "id": "U09",
+      "request": "只调整 myapp 的镜像配置，保留原数据位置。",
+      "fixture": {
+        "directory": "/srv/units/myapp",
+        "dataPaths": [
+          "/mnt/legacy/myapp"
+        ],
+        "volumes": [
+          "vendor-cache"
+        ],
+        "softwareStorageRequirement": "vendor requires existing named volume for cache persistence",
+        "dataMoveRequested": false,
+        "existingCustomization": "external bind mount and volume retained"
+      }
+    }
+  ]
+}
