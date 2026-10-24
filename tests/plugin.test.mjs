@@ -150,3 +150,20 @@ test("根目录安装指南与网站提示词独立维护，不使用版本目�
   assert.match(manual, /project\.list/);
   assert.match(manual, /不在聊天中索取/);
 });
+
+test("本机 Docker 边界随独立生成的个人规范分发", () => {
+  const spec = read("templates/skills/steward-spec/SKILL.md");
+  const setup = read("templates/skills/steward-setup/SKILL.md");
+  assert.match(spec, /本机 Docker/);
+  assert.match(setup, /endpoint/);
+  for (const env of ["dev", "qa", "pro", "prod"]) {
+    const generated = "# Nexum Steward\n\n## 服务器信息\n\nServices Root: /srv/example\n\n"
+      + read(`templates/skills/steward-setup/assets/AGENTS.${env}.md`);
+    assert.deepEqual(generated.match(/^## .+$/gm), ["## 服务器信息", "## 管理运维规范"]);
+    assert.match(generated, /本机 Docker Engine/);
+    assert.match(generated, /endpoint/);
+    assert.match(generated, /远程或无法确认/);
+  }
+  assert.ok(existsSync(resolve(root, "tests/steward-setup-scenarios.md")));
+  // 这是边界文本与产物存在检查，不是 Docker 目标识别的行为测试。
+});

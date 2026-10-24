@@ -2,7 +2,7 @@
 
 **将服务器运维交给 ChatGPT，把执行权限留在 Nexum。**
 
-Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 服务部署插件。用户先安装 Nexum，在目标 Linux 服务器安装 Nexum Agent，并在 Nexum OAuth Grant 中明确选择可管理的 Agent；插件通过既有 Nexum MCP 调用 Project / Files / Process 工具，无须另建 PaaS、Docker 专用 MCP Server 或 Web 运维后台。
+Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 服务部署插件。Docker 管理范围仅限目标 Nexum Agent 所在服务器的本机 Engine，不支持远程 Daemon。用户先安装 Nexum，在目标 Linux 服务器安装 Nexum Agent，并在 Nexum OAuth Grant 中明确选择可管理的 Agent；插件通过既有 Nexum MCP 调用 Project / Files / Process 工具，无须另建 PaaS、Docker 专用 MCP Server 或 Web 运维后台。
 
 > **当前状态：私人插件模板、`steward-spec` 与 `steward-setup` 已写入源码，尚未完成真实服务器初始化和 ChatGPT 安装验收。** 模板不预置 MCP 连接；用户需在自己的账户创建、安装并验证插件，连接与授权由现有 Nexum 应用处理。
 

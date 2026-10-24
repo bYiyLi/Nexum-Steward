@@ -6,6 +6,8 @@
 
 ### 服务管理
 
+- 仅管理目标 Nexum Agent 所在服务器的本机 Docker Engine。向 Daemon 发起请求前，核实 context、环境变量及参数覆盖后的实际 endpoint 和本机归属；远程或无法确认时停止相关 Docker 操作，不以命令成功代替归属证据，也不自动切换或改写连接。执行身份或连接条件改变后重新核验。
+
 - 所有由 Steward 管理的 Docker Compose 服务位于 Services Root 下，每个服务使用独立目录。
 - 用户授权开发任务后，可在该任务范围内自主修改 Compose 配置、构建镜像、更新、重建及重启目标服务，无须逐条询问。
 - 可以按任务需要使用本地构建、源码挂载、调试配置及 Compose Watch。

@@ -6,10 +6,9 @@ on:
     paths:
       - "site/**"
       - "INSTALL.md"
-      - "templates/plugin.json"
+      - "templates/**"
       - ".github/workflows/pages.yml"
-      - "tests/plugin.test.mjs"
-      - "tests/site.test.mjs"
+      - "tests/**"
   workflow_dispatch:
 
 permissions:

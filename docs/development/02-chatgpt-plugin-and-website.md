@@ -4,9 +4,9 @@
 
 在已初始化的 Nexum Steward 仓库中，纠正错误的 Codex 专属脚手架，并交付面向 ChatGPT 的 **MCP-only 可移植插件基础**及**公开静态产品官网**。产品 Skill 延后，不能用尚不存在的 Skill 填充本阶段验收。
 
-> **后续目录约定（本地开发，尚未发布）**：用户将该阶段原有根目录 `plugin.json` / `mcp.json` 替换为 `templates/plugin.json` 最简空模板；插件安装指南统一为仓库根目录 `INSTALL.md`；官网提示词位于 `site/src/content/`，生成的静态 `/INSTALL.md` 来自根目录原文。无 `install/` 目录、版本目录、预置 Skill 或自动打包脚本；版本通过 Git Tag 区分。下方 P-01、历史提交及线上记录保留作为**此前已发布版本**的证据，不代表此次结构调整已推送上线。
+> **后续目录约定（源码已推送，插件安装／发布另行验收）**：用户将该阶段原有根目录 `plugin.json` / `mcp.json` 替换为 `templates/plugin.json` 最简空模板；插件安装指南统一为仓库根目录 `INSTALL.md`；官网提示词位于 `site/src/content/`，生成的静态 `/INSTALL.md` 来自根目录原文。无 `install/` 目录、版本目录或自动打包脚本；版本通过 Git Tag 区分。下方 P-01、历史提交及线上记录保留作为**此前已发布版本**的证据，不作为当前结构的安装／发布证据；当前源码结构已推送。
 
-> **新的独立 Skill 增量（本地待发布）**：在插件包根目录 `templates/skills/` 下新增 `steward-spec` 和 `steward-setup`。前者规范 `steward-<节点名称>-<env>-ops`（`dev`、`qa`、`pro`、`prod`，一 Agent 一环境）、Services Root 与个人 `AGENTS.md`；后者负责服务器首次/增量初始化，并附 `assets/AGENTS.dev.md`、`AGENTS.qa.md`、`AGENTS.pro.md`、`AGENTS.prod.md` 四份环境规则。下方原阶段「不创建产品 Skill」是当时的历史范围。Skill 文本/模板校验不能替代真实 Linux 主机上的安装、数据保护与个人 Instructions 发现验收；本增量尚未安装、推送或发布插件。
+> **新的独立 Skill 增量（源码已推送，真实初始化待验收）**：在插件包根目录 `templates/skills/` 下新增 `steward-spec` 和 `steward-setup`。前者规范 `steward-<节点名称>-<env>-ops`（`dev`、`qa`、`pro`、`prod`，一 Agent 一环境）、Services Root 与个人 `AGENTS.md`；后者负责服务器首次/增量初始化，并附 `assets/AGENTS.dev.md`、`AGENTS.qa.md`、`AGENTS.pro.md`、`AGENTS.prod.md` 四份环境规则。下方原阶段「不创建产品 Skill」是当时的历史范围。Skill 文本/模板校验不能替代真实 Linux 主机上的安装、数据保护与个人 Instructions 发现验收；本增量源码已随 `80b9cd2` 推送；私人插件安装、产品发布及真实服务器初始化不由该提交证明。
 
 依据：`docs/requirements.md`（R-08～R-12）、`docs/design.md`、[OpenAI 插件打包文档](https://developers.openai.com/plugins/build/plugins)、[GitHub Pages Actions 文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
@@ -49,8 +49,16 @@
 
 完成项目的提交推送必须检查完整变更、忽略规则、测试，不能把已在 Mac 构建当作线上通过。
 
-## 不在当前范围
+## 原始阶段未包含的范围（历史）
 
 - 不创建、安装、发布产品 Skill；也不保留伪装成 ChatGPT Plugin 的 Codex 兼容包。
 - 不在这次变更中修改 Nexum Cloud/Agent/OAuth 实现。
 - 不宣称现阶段已有自动运维、数据库备份或生产 Docker Compose 部署验收。
+
+## 2026-10-24 本机 Docker 边界优化
+
+- 依据：R-15 与用户确认的仅目标 Agent 本机 Docker 要求。基线 `80b9cd2`；本增量不操作服务器或更新已安装私人插件。
+- 交付：steward-spec 持有共用约束；setup 的预检、软件验证与完成条件落实归属核验；四份独立使用的环境模板保留该边界；设计明确已有 AGENTS.md 保留例外。
+- 验收材料：[初始化场景](../../tests/steward-setup-scenarios.md)。静态包检查只证明结构、资源和边界文本存在，不证明模型或 Daemon 实际行为。
+- 状态：文本与场景已实现；云端源码副本的 `node --test tests/plugin.test.mjs` 10/10 通过，原基线为 9/9；差异空白、相关资源链接及文本场景 review 已完成，已修正表格、生成样例和过时状态措辞。本增量远端 CI 结果待提交后核验；模型独立试跑、隔离 Linux 初始化与中断恢复均未运行，不标记整体初始化验收完成。
+- 必须通过：现有插件测试、受影响文档/资源一致性、四环境生成内容及本次范围的 review。真实环境验收仍保留为后续需授权的证据项，不以静态通过替代。

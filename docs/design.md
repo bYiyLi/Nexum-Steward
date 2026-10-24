@@ -28,7 +28,7 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 - `steward-spec` 规定运维 Agent 使用 `steward-<节点名称>-<env>-ops`；`env` 只能是 `dev`、`qa`、`pro`（预生产）、`prod`。一个 Agent 对应一个环境，环境直接由 Agent 名称确定；命名只是识别约定，不产生 Nexum Grant 权限。
 - 共用 Services Root 由用户在核实存储状态后选定绝对路径，**所选路径即根目录**，不追加 `services/`。根目录内用本地 Git 管理非敏感服务配置、用 `logs/YYYY-MM-DD.md` 记录重要运维操作；不向配置 Git 提交明文秘密、运行数据或备份。
 - `steward-setup` 的唯一职责是初始化目标 Linux 服务器环境：识别授权 Agent，检查并按需准备 Docker Engine / Compose Plugin、Python 3.12、必要运维工具；创建或复用 Services Root 的 Git 和日志；在当前 Agent OS 用户的 `~/.agents/AGENTS.md` 中组合动态服务器信息与对应环境模板，并核实 Nexum Context 实际发现。首次或重复初始化均不得覆盖既有数据和指令；不预部署业务容器。
-- 个人 `AGENTS.md` 统一只设 `## 服务器信息` 与 `## 管理运维规范` 两个二级区域。前者按当前服务器实际情况动态生成，不使用固定资产字段表；后者由 dev、qa、pro、prod 四份环境模板提供不同的运维行为规则。
+- 新建个人 `AGENTS.md` 只设 `## 服务器信息` 与 `## 管理运维规范` 两个二级区域。前者按当前服务器实际情况动态生成，不使用固定资产字段表；后者由 dev、qa、pro、prod 四份环境模板提供不同的运维行为规则。已有个人文件保留其他正文、章节与用户定制，仅安全合并可定位的 Steward 内容，不能为满足新建格式删除或重排原有指令。
 - `INSTALL.md` 位于仓库根目录，作为 AI Agent 的安装指南；`site/src/content/install-prompt.zh.txt` 与 `install-prompt.en.txt` 为官网展示的安装提示词。官网静态构建直接从根目录指南生成 `/INSTALL.md`，无须维护第二份副本。
 - 不建立 `install/`、`templates` 版本子目录、打包脚本或额外的 MCP Server；发行历史使用 **Git Tag** 而不是目录路径体现。
 - 用户的现有 Nexum MCP 应用以及 OAuth Grant 由真实 ChatGPT/Nexum 平台管理。模板本身没有预授予任何 Agent 权限，也不能以提示词替代真实授权。插件实际创建、绑定、安装及工具调用仍须独立核验。
@@ -39,6 +39,12 @@ Nexum Steward 是 ChatGPT 上的插件产品，而不是 Codex 本地插件、�
 - 使用实际 `project.open` 返回的 `contextId`，依现有 Files / Process 实现运行目标上的 Docker Compose；没有 `compose.*` 专属 MCP Tools。
 - Docker Compose 操作前关注配置、端口、已运行服务、网络、数据卷、Secret；后检验命令终态、容器和应用健康。破坏性数据操作不由普通部署意图自动授权。
 - 本节是**产品接口目标**，不能以文档已写证明已经完成真实运维能力。
+
+### 本机 Docker 目标约束
+
+Agent 身份核验与 Docker Daemon 归属核验是两个不同条件：在目标 Agent 上运行 CLI，并不证明 CLI 连接了该机 Engine。按实际命令的参数、环境变量与 context 确定生效 endpoint，再用本机 Daemon/连接端点归属证据确认，不仅凭名称、路径或命令成功判断。本机 rootless Engine 可以使用其真实端点，不固定要求默认 socket。
+
+远程或未知归属时，不向该 Daemon 发起检查或变更请求，也不自动永久修改 context 或清除连接设置；报告阻塞与重新进入条件。执行身份或连接条件变化后重新核验。仅不依赖 Docker 且已获授权的工作可以继续。规则由 steward-spec 持有，setup 在准备和验收处执行；四份环境模板保留简短边界，因为生成的个人 AGENTS.md 会独立使用。
 
 ## 4. 产品官网
 

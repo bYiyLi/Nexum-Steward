@@ -31,6 +31,7 @@
 | R-12 | GitHub Pages 从公开源码部署至 `nexum-steward.sites.y2l.top` 并启用 HTTPS。 | workflow 成功、Pages 精确域名绑定、泛解析 DNS 与 HTTPS 实际检查。 |
 | R-13 | `INSTALL.md` 位于仓库根目录，网站展示可复制的安装提示词；不使用安装目录或版本目录，版本由 Git Tag 区分。 | 文件位置、静态构建产物、安装提示词与指南链接一致。 |
 | R-14 | `templates/skills/steward-setup/` 提供服务器环境初始化 Skill 及 dev、qa、pro、prod 四份 AGENTS.md 环境规则模板；支持缺失软件补齐、用户选择 Services Root、本地配置 Git、日志和个人 AGENTS.md 的首次/增量初始化，不负责业务服务部署。 | Skill 格式、模板完整性、两区域结构、已存在配置保护和敏感数据边界检查；真实服务器执行单独验收。 |
+| R-15 | Steward 仅管理目标 Nexum Agent 所在服务器的本机 Docker Engine，不支持远程 Daemon；实际 endpoint 归属未确认时停止相关 Docker 操作，不能以远端成功替代本机就绪。 | 本机（含 rootless）正例、远程 context/环境变量/参数覆盖及未知归属负例；静态规则检查与真实执行证据分别记录。 |
 
 ## 非目标
 
