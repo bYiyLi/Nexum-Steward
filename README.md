@@ -12,7 +12,7 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 
 **[私人 ChatGPT Plugin 安装引导](https://nexum-steward.sites.y2l.top/install/)** · [AI Agent 安装指南](INSTALL.md)
 
-官网位于 [site/](site/)，参考 KG OS 产品网站的静态 Astro + GitHub Actions Pages 发布方式，但拥有独立的设计与内容。
+官网位于 [site/](site/)，采用居中首屏、统一内容宽度与单一蓝色强调，中英与深浅主题均可用。安装页直接提供短提示词；ChatGPT 按单一指南识别现状，选择首次、更新或无需变更。安装能力取决于账户与工作区，安装流程不执行服务器运维。
 
 ## 插件结构
 
@@ -28,6 +28,7 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 | [site/](site/) | 产品官网（GitHub Pages 静态站） |
 | [docs/requirements.md](docs/requirements.md) | 需求与验收边界 |
 | [docs/design.md](docs/design.md) | 插件和网站技术设计 |
+| [docs/development/05-website-and-installation.md](docs/development/05-website-and-installation.md) | 当前官网与安装入口计划、视觉和交付证据 |
 | [docs/development/04-steward-deploy.md](docs/development/04-steward-deploy.md) | 当前 deploy 单一计划、检查证据与待验收项 |
 | [docs/development/03-steward-doctor.md](docs/development/03-steward-doctor.md) | doctor 历史实施、证据与待验收项 |
 | [docs/development/02-chatgpt-plugin-and-website.md](docs/development/02-chatgpt-plugin-and-website.md) | 插件与网站历史交付 |

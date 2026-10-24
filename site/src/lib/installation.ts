@@ -1,65 +1,29 @@
 import type { Locale } from "./content";
 import zhPrompt from "../content/install-prompt.zh.txt?raw";
 import enPrompt from "../content/install-prompt.en.txt?raw";
-
 export const installationManual = "/INSTALL.md";
-export const installationTemplate = "https://github.com/bYiyLi/Nexum-Steward/blob/main/templates/plugin.json";
-
 const labels = {
   zh: {
-    title: "创建你的 Nexum Steward 私人插件",
-    description: "Nexum Steward 官方 ChatGPT 私人插件安装引导、AI 手册和可复制提示词。",
-    back: "返回首页",
-    phase: "OFFICIAL PRIVATE PLUGIN SETUP",
-    heading: "创建属于你的 ChatGPT 运维插件。",
-    introduction: "先确认 Nexum Agent 和 OAuth 授权范围，再将提示词发送给 ChatGPT。安装 Agent 会核对实际连接、官方模板与已有定制，协助你创建私人插件。",
-    note: "当前源码包含 steward-spec、steward-setup、steward-doctor 和 steward-deploy 四技能及所需资源；deploy 先规划确认再变更，首版不构建源码。ChatGPT 发现、独立模型与真实 Linux 执行仍待验收。无内置 MCP 连接。网站不会接收凭证，也不会执行服务器命令。",
-    stepsTitle: "安装流程",
-    steps: [
-      ["01", "准备 Nexum", "已在需要管理的服务器上安装 Nexum Agent。"],
-      ["02", "连接 ChatGPT", "优先复用已有的 Nexum MCP 应用；未连接则完成 OAuth 授权。"],
-      ["03", "描述需求", "填写目标账户、Agent 名称、私人插件名称与个人使用偏好。"],
-      ["04", "核对与安装", "审阅生成方案，创建私有插件并用只读查询验证。"]
-    ],
-    promptTitle: "复制完整提示词",
-    promptIntro: "替换方括号中的内容，没有的填“无”或“待确认”。不要在聊天中粘贴密钥或 Token。",
-    copy: "复制提示词",
-    copied: "提示词已复制，可以粘贴到 ChatGPT",
-    failed: "复制失败，请选中下面的文本手动复制",
-    resourcesTitle: "官方安装资源",
-    manualLabel: "AI 安装手册 INSTALL.md",
-    packageLabel: "官方插件模板",
-    caveatTitle: "保留你的权限边界",
-    caveatText: "Agent 名称不是权限凭证，真实可见机器由 Nexum OAuth Grant 决定。私人插件创建、安装和能否调用工具是不同状态。旧私人插件与共享连接在新版本验收前应保留。"
+    title: "安装 Nexum Steward", description: "把简短提示词发送给 ChatGPT，按官方指南安装 Nexum Steward 私人插件。",
+    back: "返回首页", phase: "INSTALL NEXUM STEWARD", heading: "把下面这段话发送给 ChatGPT",
+    introduction: "让 ChatGPT 先了解现状，再按官方指南协助安装。无需预填信息。",
+    promptTitle: "安装提示词", copy: "复制提示词", copied: "已复制，粘贴到 ChatGPT 即可。", failed: "复制未成功。文本已选中，请手动复制；也可直接选择下方全文。",
+    select: "手动选择全文", selected: "已选中完整提示词，请使用系统复制快捷键。",
+    stepsTitle: "接下来，只有三步",
+    steps: [["01", "读指南", "ChatGPT 核实官方版本与当前能力。"], ["02", "确认连接目标", "复用已有 Nexum，仅在必要时询问选择或登录授权。"], ["03", "核验结果", "分开核实插件、技能发现与只读连接结果。"]],
+    manualLabel: "阅读完整安装指南", packageLabel: "查看官方源码", note: "插件尚未正式发布，安装能力取决于当前账户与工作区。安装不部署服务器。",
+    status: "源码包含 steward-spec、steward-setup、steward-doctor、steward-deploy 及所需资源。deploy 首版不构建源码。ChatGPT 安装与发现、模型行为、真实 Linux 执行仍待验收。"
   },
   en: {
-    title: "Create your Nexum Steward private Plugin",
-    description: "Official Nexum Steward private ChatGPT Plugin guide, AI manual, and copyable installation prompt.",
-    back: "Back home",
-    phase: "OFFICIAL PRIVATE PLUGIN SETUP",
-    heading: "Create your private ChatGPT operations Plugin.",
-    introduction: "Verify your existing Nexum Agents and OAuth permissions, then send the prompt to ChatGPT. The installation Agent will inspect the current connection, official template, and existing customizations.",
-    note: "Current source includes steward-spec, steward-setup, steward-doctor and steward-deploy with their required resources. Deploy requires a confirmed plan and does not build source. ChatGPT discovery, independent model behavior and real Linux execution remain unverified. There is no bundled MCP connection. The website does not collect credentials or run server commands.",
-    stepsTitle: "Installation workflow",
-    steps: [
-      ["01", "Prepare Nexum", "Install Nexum Agents on the servers you want to manage."],
-      ["02", "Connect ChatGPT", "Reuse your existing Nexum MCP app, or connect with OAuth if necessary."],
-      ["03", "Describe your needs", "Specify the account, Agent names, private Plugin name, and preferences."],
-      ["04", "Review and install", "Review the plan, create the private Plugin, and verify with read-only calls."]
-    ],
-    promptTitle: "Copy the full prompt",
-    promptIntro: "Replace the bracketed fields; use “none” or “to be confirmed” when appropriate. Never paste secrets or tokens.",
-    copy: "Copy installation prompt",
-    copied: "Prompt copied. Paste it into ChatGPT.",
-    failed: "Copy failed. Select and copy the text manually.",
-    resourcesTitle: "Official installation resources",
-    manualLabel: "AI manual INSTALL.md",
-    packageLabel: "Official Plugin template",
-    caveatTitle: "Keep authorization in your hands",
-    caveatText: "Agent names are not credentials; Nexum OAuth grants control access. Creating a private Plugin, installing it, and verifying tools are distinct. Preserve old Plugins and shared connections until the new version passes checks."
+    title: "Install Nexum Steward", description: "Send a short prompt to ChatGPT to install your private Nexum Steward Plugin using the official guide.",
+    back: "Back home", phase: "INSTALL NEXUM STEWARD", heading: "Send this message to ChatGPT",
+    introduction: "Let ChatGPT check your current setup and follow the official guide. No form to fill in.",
+    promptTitle: "Installation prompt", copy: "Copy prompt", copied: "Copied. Paste it into ChatGPT.", failed: "Copy did not succeed. The text is selected; copy it manually or select the full text below.",
+    select: "Select full prompt", selected: "Full prompt selected. Use your system copy shortcut.",
+    stepsTitle: "Three simple steps",
+    steps: [["01", "Read the guide", "ChatGPT checks official versions and available capabilities."], ["02", "Confirm the target", "Reuse Nexum. Ask only when a choice or sign-in authorization is needed."], ["03", "Verify the result", "Check the Plugin, Skill discovery and read-only connection separately."]],
+    manualLabel: "Read the full installation guide", packageLabel: "View official source", note: "No formal Plugin release yet. Installation depends on your account and workspace. It does not deploy servers.",
+    status: "Source includes steward-spec, steward-setup, steward-doctor, steward-deploy and their resources. Deploy does not build source. ChatGPT installation and discovery, model behavior and real Linux execution remain unverified."
   }
 } as const;
-
-export function getInstallCopy(locale: Locale) {
-  return { text: labels[locale], prompt: locale === "zh" ? zhPrompt.trim() : enPrompt.trim() };
-}
+export function getInstallCopy(locale: Locale) { return { text: labels[locale], prompt: (locale === "zh" ? zhPrompt : enPrompt).trim() }; }

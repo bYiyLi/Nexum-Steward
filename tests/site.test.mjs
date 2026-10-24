@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { test } from "node:test";
+import { bindInstallPrompt } from "../site/src/lib/copy-prompt.ts";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -46,7 +47,7 @@ test("官网安装页展示提示词，唯一的安装指南来自仓库根目�
   for (const page of [zh, en]) {
     assert.ok(page.includes('href="/INSTALL.md"'));
     assert.ok(page.includes("data-copy-install"));
-    assert.ok(page.includes("templates/plugin.json"));
+    assert.ok(page.includes("/tree/main/templates"));
   }
   assert.ok(html("index.html").includes('href="/install/"'));
   assert.ok(html("en/index.html").includes('href="/en/install/"'));
@@ -55,7 +56,13 @@ test("官网安装页展示提示词，唯一的安装指南来自仓库根目�
   for (const locale of ["zh", "en"]) {
     const page = html(locale === "zh" ? "install/index.html" : "en/install/index.html");
     const prompt = readFileSync(resolve(root, "site/src/content/install-prompt." + locale + ".txt"), "utf8").trim();
-    assert.ok(page.replaceAll("&quot;", '"').includes(prompt), locale + " prompt missing or changed");
+    const displayed = promptParagraphs(page).map(p => p.textContent).join("\n");
+    assert.equal(displayed, prompt, locale + " visible prompt differs from source");
+    assert.ok(prompt.length < (locale === "zh" ? 200 : 450));
+    assert.doesNotMatch(prompt, /\[.*?\]/);
+    assert.doesNotMatch(page, /<(?:form|input|textarea|select)\b/i);
+    assert.equal((page.match(/class="guide-number"/g) ?? []).length, 3);
+    assert.ok(page.indexOf('id="guide-prompt-content"') < page.indexOf('class="guide-flow"'));
   }
 });
 
@@ -71,4 +78,66 @@ test("中英首页与安装页保留四技能、部署边界和待验收状态",
   }
   assert.match(html("index.html"), /data \+ bind mount/);
   assert.match(html("en/index.html"), /bind mounts/);
+});
+
+function promptParagraphs(page) {
+  const block = page.match(/<div id="guide-prompt-content"[^>]*>([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(block, "visible prompt container missing");
+  return Array.from(block.matchAll(/<p>([\s\S]*?)<\/p>/g), ([, text]) => ({
+    textContent: text.replace(/<[^>]*>/g, "").replaceAll("&amp;", "&").replaceAll("&quot;", '"').replaceAll("&#39;", "'")
+  }));
+}
+
+function promptDOM(page) {
+  const events = {};
+  const copy = { dataset: { success: "copied", error: "failed" }, addEventListener: (_, cb) => { events.copy = cb; } };
+  const select = { dataset: { selected: "selected" }, addEventListener: (_, cb) => { events.select = cb; } };
+  const status = { textContent: "" };
+  const selection = { removeAllRanges() {}, addRange() { this.selected = true; } };
+  const content = { children: promptParagraphs(page), focus() { this.focused = true; } };
+  const root = {
+    getElementById: () => content,
+    querySelector: key => ({ "[data-copy-install]": copy, "[data-select-install]": select, "[data-copy-status]": status })[key],
+    createRange: () => ({ selectNodeContents: node => assert.equal(node, content) }),
+    getSelection: () => selection
+  };
+  return { root, events, status, content, selection };
+}
+
+test("复制读取全部可见段落，成功、拒绝和无 Clipboard 均有可用反馈", async () => {
+  for (const locale of ["zh", "en"]) {
+    const page = html(locale === "zh" ? "install/index.html" : "en/install/index.html");
+    const expected = readFileSync(resolve(site, `../src/content/install-prompt.${locale}.txt`), "utf8").trim();
+    const success = promptDOM(page);
+    let clipboard;
+    bindInstallPrompt(success.root, { writeText: async text => { clipboard = text; } });
+    await success.events.copy();
+    assert.equal(clipboard, expected);
+    assert.equal(success.status.textContent, "copied");
+    for (const api of [undefined, { writeText: async () => { throw new Error("denied"); } }]) {
+      const failure = promptDOM(page);
+      bindInstallPrompt(failure.root, api);
+      await failure.events.copy();
+      assert.equal(failure.status.textContent, "failed");
+      assert.equal(failure.content.focused, true);
+      assert.equal(failure.selection.selected, true);
+      failure.events.select();
+      assert.equal(failure.status.textContent, "selected");
+    }
+  }
+});
+
+test("内部链接均指向存在的页面或锚点，场景始终标注非执行", () => {
+  for (const name of ["index.html", "en/index.html", "install/index.html", "en/install/index.html"]) {
+    const page = html(name);
+    for (const [, href] of page.matchAll(/href="([^"#]*(?:#[^"]*)?)"/g)) {
+      if (href.startsWith("#")) assert.ok(page.includes(`id="${href.slice(1)}"`), `${name}: ${href}`);
+      else if (href.startsWith("/") && !href.startsWith("//")) {
+        const path = href.split("#")[0];
+        assert.ok(existsSync(resolve(site, path.slice(1) + (path.endsWith("/") ? "index.html" : ""))), `${name}: ${href}`);
+      }
+    }
+  }
+  assert.match(html("index.html"), /交互示意 · 非实际执行/);
+  assert.match(html("en/index.html"), /Illustration · Not executed/);
 });

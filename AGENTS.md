@@ -4,7 +4,8 @@
 
 - 产品与验收：`docs/requirements.md`
 - 架构及网站设计：`docs/design.md`
-- 当前开发交付与状态：`docs/development/04-steward-deploy.md`
+- 当前官网与安装入口交付：`docs/development/05-website-and-installation.md`
+- 运维技能交付与待验收状态：`docs/development/04-steward-deploy.md`
 - 环境诊断历史交付：`docs/development/03-steward-doctor.md`
 - 插件与网站历史交付：`docs/development/02-chatgpt-plugin-and-website.md`
 - 初始化历史记录：`docs/development/01-initialization.md`

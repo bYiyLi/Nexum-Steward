@@ -1,13 +1,3 @@
-Follow the official Nexum Steward private ChatGPT Plugin installation manual:
+Please help me install Nexum Steward using the official guide:
 https://nexum-steward.sites.y2l.top/INSTALL.md
-
-Verified ChatGPT Nexum app: [app name; enter "none" if not connected]
-Target ChatGPT account/workspace: [target]
-Nexum Agent names allowed for management: [names; enter "to be confirmed" if unknown]
-My private Plugin name: [name; default "Nexum Steward"]
-Existing private Plugin: [name and version, or "none"]
-My operational goals, preferences and customizations to preserve: [details]
-
-Reuse my installed Nexum, existing Agents and connected ChatGPT MCP app. Do not redeploy, initialize or upgrade any server or service. First inspect the actual connection, OAuth Grant-visible Agents, official template, and any existing private Plugin customizations. Present a concrete plan; create a private Plugin in my account only after I approve it. Prefer binding an existing registered Nexum app instead of registering a duplicate MCP connection; if not connected, guide me through ChatGPT MCP setup and OAuth.
-
-Current source includes steward-spec, steward-setup, steward-doctor and steward-deploy. Verify the actual complete package and recursively referenced resources at the selected Git Tag; source availability does not prove release or acceptance. Doctor reports findings without automatic repair. Deploy requires a confirmed plan and does not build source. Installation checks cover Skill discovery and read-only project.list only, without server commands, diagnosis or deployment. Do not invent compose.* MCP tools or treat Agent names or prompt text as authorization. Verify creation, installation and actual tool accessibility separately. Retain my old Plugin and shared connection until the new one passes checks; remove only with my explicit approval. Do not ask me to paste credentials into chat or repeat approvals already given for ordinary steps.
+Read the guide first, reuse existing connections, and preserve my current configuration. Ask when a target must be chosen or sign-in authorization is needed. Do not ask me to provide credentials in chat.

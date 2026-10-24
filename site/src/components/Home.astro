@@ -17,7 +17,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
 ---
 
 <!doctype html>
-<html lang={t.lang} data-theme="dark">
+<html lang={t.lang} data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,8 +36,8 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
     <title>{t.pageTitle}</title>
     <script is:inline>
       try {
-        if (localStorage.getItem("nexum-steward-theme") === "light") {
-          document.documentElement.dataset.theme = "light";
+        if (localStorage.getItem("nexum-steward-theme") === "dark") {
+          document.documentElement.dataset.theme = "dark";
         }
       } catch {}
     </script>
@@ -53,7 +53,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
             <svg viewBox="0 0 40 40" width="38" height="38" fill="none">
               <path d="M20 3L34.7 11.5V28.5L20 37L5.3 28.5V11.5L20 3Z" stroke="currentColor" stroke-width="1.8" />
               <path d="M12.8 26V14L27.2 26V14" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" />
-              <circle cx="33" cy="8" r="3.2" fill="#81eac5" />
+              <circle cx="33" cy="8" r="3.2" fill="currentColor" />
             </svg>
           </span>
           <span>Nexum <strong>Steward</strong></span>
@@ -97,7 +97,7 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
       <section class="hero container" id="overview">
         <div class="hero-copy">
           <span class="eyebrow"><span class="status-dot" aria-hidden="true"></span>{t.kicker}</span>
-          <p class="phase-label">{t.phase}</p>
+
           <h1><span>{t.heroTitleA}</span><span class="gradient-text">{t.heroTitleB}</span></h1>
           <p class="hero-intro">{t.heroText}</p>
           <div class="hero-actions">
@@ -106,58 +106,30 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
           </div>
           <ul class="hero-chips">
             {t.chips.map(chip => <li><span aria-hidden="true"></span>{chip}</li>)}
-          </ul>
+          </ul><p class="phase-label">{t.phase}</p>
         </div>
 
-        <div class="hero-preview" aria-label={t.previewTitle}>
-          <div class="preview-window">
-            <div class="window-titlebar">
-              <div class="window-controls" aria-hidden="true"><i></i><i></i><i></i></div>
-              <span>NEXUM / STEWARD</span>
-              <span class="preview-label">{t.previewMeta}</span>
-            </div>
-            <div class="preview-body">
-              <div class="preview-conversation">
-                <span class="message-avatar" aria-hidden="true">U</span>
-                <p>{t.prompt}</p>
-              </div>
-              <div class="agent-meta">
-                <span class="agent-glyph" aria-hidden="true"><svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="3" width="15" height="6" rx="1.5"/><rect x="2.5" y="11" width="15" height="6" rx="1.5"/><circle cx="5.7" cy="6" r=".75" fill="currentColor"/><circle cx="5.7" cy="14" r=".75" fill="currentColor"/></svg></span>
-                <span><small>{t.access}</small><strong>prod-app-01</strong></span>
-                <span class="agent-connection" aria-hidden="true"></span>
-              </div>
-              <ol class="preview-steps">
-                <li><span class="step-id">01</span><div><strong>project.list</strong><small>{t.inspectDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
-                <li><span class="step-id">02</span><div><strong>project.open</strong><small>{t.planDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
-                <li><span class="step-id">03</span><div><strong>files.* / process.*</strong><small>{t.verifyDetail}</small></div><span class="step-marker" aria-hidden="true">↗</span></li>
-              </ol>
-              <div class="preview-terminal">
-                <div class="terminal-caption"><span aria-hidden="true">$</span>{t.consoleCaption}</div>
-                <code><span>docker</span> compose config --quiet</code>
-              </div>
-            </div>
-            <p class="preview-footnote">{t.previewNote}</p>
-          </div>
-        </div>
       </section>
-
-      <section class="foundation-section" aria-labelledby="foundation-heading">
-        <div class="container">
-          <div class="section-head wide-head">
-            <span class="section-kicker">{t.foundationKicker}</span>
-            <h2 id="foundation-heading">{t.foundationTitle}</h2>
-            <p>{t.foundationText}</p>
-          </div>
-          <div class="foundation-grid">
-            {t.pillars.map(item => (
-              <article class="foundation-card">
-                <span class="card-index">{item.n} / NEXUM</span>
-                <h3>{item.name}</h3>
-                <p>{item.detail}</p>
-              </article>
-            ))}
-          </div>
+      <section class="container scenario-section" id="workflow" aria-labelledby="scenario-heading">
+        <div class="scenario-heading"><div><p class="section-kicker">{locale === "zh" ? "产品体验 / 01" : "PRODUCT EXPERIENCE / 01"}</p><h2 id="scenario-heading">{locale === "zh" ? "一次服务更新，如何走到可核验的结果？" : "From an update request to a verifiable result."}</h2></div><span class="scenario-label">{locale === "zh" ? "交互示意 · 非实际执行" : "Illustration · Not executed"}</span></div>
+        <div class="scenario-panel">
+          <div class="scenario-request"><span class="scenario-avatar" aria-hidden="true">{locale === "zh" ? "你" : "You"}</span><p>{locale === "zh" ? "把测试环境的知识库服务更新到指定镜像，保留现有数据。" : "Update the knowledge service in staging to the selected image. Keep existing data."}</p></div>
+          <ol class="scenario-stages">
+            {(locale === "zh" ? [
+              ["01 / 请求", "明确目标", "核对已授权机器、服务和当前版本。"],
+              ["02 / 计划", "把影响讲清楚", "检查配置差异、数据兼容和恢复前提。"],
+              ["03 / 确认", "由你决定变更", "展示具体计划；确认后才进入执行。"],
+              ["04 / 验证报告", "用证据交付", "分别报告执行、容器、应用健康和未验项。"]
+            ] : [
+              ["01 / REQUEST", "Identify the target", "Verify the authorized host, service and current version."],
+              ["02 / PLAN", "Explain the impact", "Review configuration, data compatibility and recovery prerequisites."],
+              ["03 / CONFIRM", "You decide", "Present the specific plan. Execution follows confirmation."],
+              ["04 / REPORT", "Deliver evidence", "Separate process results, containers, app health and unverified items."]
+            ]).map(([n,title,body]) => <li><span class="section-kicker">{n}</span><h3>{title}</h3><p>{body}</p></li>)}
+          </ol>
+          <div class="scenario-report"><span>{locale === "zh" ? "预期报告结构" : "EXPECTED REPORT"}</span><p>{locale === "zh" ? "已验证的结果 + 待处理项 + 证据与限制" : "Verified results + open items + evidence and limitations"}</p></div>
         </div>
+        <p class="scenario-caption">{locale === "zh" ? "示例用于解释产品工作方式，不代表真实服务器执行记录。" : "This example explains the workflow; it is not a record of a real server operation."}</p>
       </section>
 
       <section class="content-section" id="capabilities" aria-labelledby="capabilities-heading">
@@ -178,34 +150,12 @@ const sections = ["#overview", "#capabilities", "#workflow", "#safety"];
         </div>
       </section>
 
-      <section class="content-section workflow-section" id="workflow" aria-labelledby="workflow-heading">
-        <div class="container">
-          <div class="section-head">
-            <span class="section-kicker">{t.workflowKicker}</span>
-            <h2 id="workflow-heading">{t.workflowTitle}</h2>
-          </div>
-          <ol class="workflow-list">
-            {t.steps.map((step, i) => (
-              <li class="workflow-step"><span class="workflow-counter">{String(i + 1).padStart(2, "0")}</span><div><h3>{step.title}</h3><p>{step.body}</p></div><span class="workflow-arrow" aria-hidden="true">↗</span></li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
       <section class="content-section safety-section" id="safety" aria-labelledby="safety-heading">
         <div class="container safety-layout">
           <div class="safety-intro">
             <span class="section-kicker">{t.safetyKicker}</span>
             <h2 id="safety-heading">{t.safetyTitle}</h2>
             <p>{t.safetyText}</p>
-            <div class="safety-graphic" aria-hidden="true">
-              <svg viewBox="0 0 280 185" fill="none">
-                <path d="M140 12L228 49V110C228 141 185 164 140 177C95 164 52 141 52 110V49L140 12Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M140 37L201 63V110C201 131 173 149 140 159C107 149 79 131 79 110V63L140 37Z" stroke="currentColor" stroke-opacity=".4" stroke-width="1.5"/>
-                <path d="M110 98L132 120L174 76" stroke="#81eac5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="228" cy="49" r="7" fill="#81eac5"/>
-              </svg>
-            </div>
           </div>
           <div class="safety-points">
             {t.safety.map((item, i) => (
