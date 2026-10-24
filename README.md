@@ -4,7 +4,7 @@
 
 Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 服务部署插件。用户先安装 Nexum，在目标 Linux 服务器安装 Nexum Agent，并在 Nexum OAuth Grant 中明确选择可管理的 Agent；插件通过既有 Nexum MCP 调用 Project / Files / Process 工具，无须另建 PaaS、Docker 专用 MCP Server 或 Web 运维后台。
 
-> **当前状态：私人插件空模板与安装引导正在准备，尚未在 ChatGPT 完成安装验收。** 空模板不包含 MCP 连接或 Skill。用户按实际需求生成私人插件并在自己的账户安装，连接与授权由现有 Nexum 应用处理。
+> **当前状态：私人插件模板、`steward-spec` 与 `steward-setup` 已写入源码，尚未完成真实服务器初始化和 ChatGPT 安装验收。** 模板不预置 MCP 连接；用户需在自己的账户创建、安装并验证插件，连接与授权由现有 Nexum 应用处理。
 
 ## 产品网站
 
@@ -18,7 +18,10 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 
 | 文件 | 作用 |
 | --- | --- |
-| [templates/plugin.json](templates/plugin.json) | 最简 ChatGPT 插件空模板，不预设 MCP 或 Skill |
+| [templates/plugin.json](templates/plugin.json) | 最简 ChatGPT 插件清单，不预设 MCP 连接 |
+| [templates/skills/steward-spec/SKILL.md](templates/skills/steward-spec/SKILL.md) | Steward 共用规范：Agent 命名、Services Root 与个人 AGENTS.md |
+| [templates/skills/steward-setup/SKILL.md](templates/skills/steward-setup/SKILL.md) | 服务器环境初始化 Skill：软件准备、服务根目录、Git、日志和个人 AGENTS.md |
+| [templates/skills/steward-setup/assets/](templates/skills/steward-setup/assets/) | dev、qa、pro、prod 四份环境运维规范模板 |
 | [INSTALL.md](INSTALL.md) | AI Agent 使用的私人插件安装指南 |
 | [site/](site/) | 产品官网（GitHub Pages 静态站） |
 | [docs/requirements.md](docs/requirements.md) | 需求与验收边界 |
@@ -26,7 +29,7 @@ Nexum Steward 是面向 **ChatGPT** 的 Linux 服务器运维与 Docker Compose 
 | [docs/development/02-chatgpt-plugin-and-website.md](docs/development/02-chatgpt-plugin-and-website.md) | 本阶段实施和验收 |
 | [docs/chatgpt-project.md](docs/chatgpt-project.md) | 维护者的 ChatGPT 开发 Project Instructions 模板 |
 
-插件模板与安装指南在仓库中各维护一份，版本通过 Git Tag 区分；官网使用 `site/src/content/` 下的提示词。项目**不包含** `.codex-plugin/`、产品 `skills/`、独立运维后端或 Docker 操作脚本。
+插件包位于 `templates/`，安装指南在仓库根目录维护；版本通过 Git Tag 区分，官网使用 `site/src/content/` 下的提示词。项目**不包含** `.codex-plugin/`、独立运维后端或 Docker 操作脚本。
 
 ## 预期工作流程
 

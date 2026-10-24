@@ -6,6 +6,8 @@
 
 > **后续目录约定（本地开发，尚未发布）**：用户将该阶段原有根目录 `plugin.json` / `mcp.json` 替换为 `templates/plugin.json` 最简空模板；插件安装指南统一为仓库根目录 `INSTALL.md`；官网提示词位于 `site/src/content/`，生成的静态 `/INSTALL.md` 来自根目录原文。无 `install/` 目录、版本目录、预置 Skill 或自动打包脚本；版本通过 Git Tag 区分。下方 P-01、历史提交及线上记录保留作为**此前已发布版本**的证据，不代表此次结构调整已推送上线。
 
+> **新的独立 Skill 增量（本地待发布）**：在插件包根目录 `templates/skills/` 下新增 `steward-spec` 和 `steward-setup`。前者规范 `steward-<节点名称>-<env>-ops`（`dev`、`qa`、`pro`、`prod`，一 Agent 一环境）、Services Root 与个人 `AGENTS.md`；后者负责服务器首次/增量初始化，并附 `assets/AGENTS.dev.md`、`AGENTS.qa.md`、`AGENTS.pro.md`、`AGENTS.prod.md` 四份环境规则。下方原阶段「不创建产品 Skill」是当时的历史范围。Skill 文本/模板校验不能替代真实 Linux 主机上的安装、数据保护与个人 Instructions 发现验收；本增量尚未安装、推送或发布插件。
+
 依据：`docs/requirements.md`（R-08～R-12）、`docs/design.md`、[OpenAI 插件打包文档](https://developers.openai.com/plugins/build/plugins)、[GitHub Pages Actions 文档](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
 ## 范围和验收

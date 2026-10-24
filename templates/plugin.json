@@ -2,5 +2,5 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "nexum-steward",
   "version": "0.1.0",
-  "description": "Empty ChatGPT plugin template."
+  "description": "Nexum Steward ChatGPT plugin template."
 }
